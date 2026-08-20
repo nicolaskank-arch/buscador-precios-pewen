@@ -105,6 +105,29 @@
     padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.3);
     z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
   .toast.on{opacity:1}
+  .ph img{cursor:zoom-in}
+  .fotomas{position:absolute;right:7px;top:7px;background:rgba(19,17,16,.78);color:#fff;
+    font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:6px}
+  .orden{position:relative;display:flex}
+  select#orden{flex:0 0 auto;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);
+    color:#fff;border-radius:10px;padding:12px 30px 12px 12px;font-size:15px;appearance:none;
+    -webkit-appearance:none;cursor:pointer}
+  select#orden:focus{outline:none;border-color:var(--oro)}
+  .orden::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    color:rgba(255,255,255,.7);pointer-events:none;font-size:11px}
+  @media (min-width:900px) and (hover:hover) and (pointer:fine){
+    select#orden{padding:8px 26px 8px 11px;font-size:13.5px;border-radius:9px}
+  }
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(10,9,8,.92);z-index:60;
+    align-items:center;justify-content:center;flex-direction:column;padding:16px}
+  .lightbox.on{display:flex}
+  .lightbox img{max-width:92vw;max-height:80vh;object-fit:contain;border-radius:6px;background:#1a1714}
+  .lightbox .cerrar{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.14);color:#fff;
+    border:0;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer}
+  .lightbox .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.14);
+    color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer}
+  .lightbox .prev{left:12px} .lightbox .next{right:12px}
+  .lightbox .contador{color:rgba(255,255,255,.7);font-size:12.5px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -124,6 +147,16 @@
         <input id="buscar" type="text" placeholder="Buscar por nombre, código o línea…" autocomplete="off">
         <button class="limpiar" id="limpiar">×</button>
       </div>
+      <div class="orden">
+        <select id="orden">
+          <option value="relevancia">Relevancia</option>
+          <option value="nombre">Nombre (A-Z)</option>
+          <option value="precio_asc">Precio (menor a mayor)</option>
+          <option value="precio_desc">Precio (mayor a menor)</option>
+          <option value="codigo">Código</option>
+          <option value="populares">Más buscados</option>
+        </select>
+      </div>
     </div>
     <div class="chips" id="chips"></div>
   </div>
@@ -134,13 +167,20 @@
 </main>
 <div class="toast" id="toast"></div>
 <input type="file" id="fotoInput" accept="image/*" capture="environment" style="display:none">
+<div class="lightbox" id="lightbox">
+  <button class="cerrar" id="lbCerrar">×</button>
+  <button class="nav prev" id="lbPrev">‹</button>
+  <img id="lbImg" src="">
+  <button class="nav next" id="lbNext">›</button>
+  <div class="contador" id="lbContador"></div>
+</div>
 
 <script>
 // Pegá acá la URL /exec de tu Web App (ver apps-script/Codigo.gs + GUIA-DEPLOY).
 // Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
 
-var state = { productos: [], filtro: '', grupo: 'Todos', dolar: null, fotosSubidas: {} };
+var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'relevancia', dolar: null, fotosSubidas: {}, populares: {} };
 
 function fmtMoney(v, moneda){
   if(v==null) return '—';
@@ -184,17 +224,69 @@ function toast(msg){
 function cargarFotosSubidas(){
   if(!SCRIPT_URL) return;
   var cache = localStorage.getItem('bp_fotos_subidas');
-  if(cache){ try{ state.fotosSubidas = JSON.parse(cache); }catch(e){} }
+  if(cache && !Object.keys(state.fotosSubidas).length){ try{ state.fotosSubidas = JSON.parse(cache); }catch(e){} }
   fetch(SCRIPT_URL + '?fotos=1')
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d || !d.ok) return;
+      var nuevo = JSON.stringify(d.fotos || {});
+      if(nuevo === JSON.stringify(state.fotosSubidas)) return;  // nada cambió, no re-renderizamos
       state.fotosSubidas = d.fotos || {};
-      localStorage.setItem('bp_fotos_subidas', JSON.stringify(state.fotosSubidas));
+      localStorage.setItem('bp_fotos_subidas', nuevo);
       renderGrid();
     })
     .catch(function(){});
 }
+
+function cargarPopulares(){
+  if(!SCRIPT_URL) return;
+  fetch(SCRIPT_URL + '?populares=1')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if(d && d.ok) state.populares = d.populares || {}; })
+    .catch(function(){});
+}
+
+function registrarVista(p){
+  if(!SCRIPT_URL) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ accion: 'vista', codigo: p.id, nombre: p.nombre_base })
+  }).catch(function(){});
+}
+
+// Todas las fotos de un producto: las que subió el equipo (más nueva primero)
+// + la original del catálogo si no está repetida.
+function todasLasFotos(p){
+  var subidas = (state.fotosSubidas[p.id] || []).map(function(f){ return f.url; }).reverse();
+  if(p.foto_url && subidas.indexOf(p.foto_url) < 0) subidas.push(p.foto_url);
+  return subidas;
+}
+
+var lbFotos = [], lbIndex = 0;
+function abrirLightbox(fotos, i){
+  if(!fotos.length) return;
+  lbFotos = fotos; lbIndex = i;
+  pintarLightbox();
+  document.getElementById('lightbox').classList.add('on');
+}
+function pintarLightbox(){
+  document.getElementById('lbImg').src = lbFotos[lbIndex];
+  document.getElementById('lbContador').textContent = (lbIndex+1) + ' / ' + lbFotos.length;
+  var multi = lbFotos.length > 1;
+  document.getElementById('lbPrev').style.display = multi ? '' : 'none';
+  document.getElementById('lbNext').style.display = multi ? '' : 'none';
+}
+document.getElementById('lbCerrar').addEventListener('click', function(){ document.getElementById('lightbox').classList.remove('on'); });
+document.getElementById('lightbox').addEventListener('click', function(e){ if(e.target.id==='lightbox') this.classList.remove('on'); });
+document.getElementById('lbPrev').addEventListener('click', function(){ lbIndex = (lbIndex - 1 + lbFotos.length) % lbFotos.length; pintarLightbox(); });
+document.getElementById('lbNext').addEventListener('click', function(){ lbIndex = (lbIndex + 1) % lbFotos.length; pintarLightbox(); });
+document.addEventListener('keydown', function(e){
+  if(!document.getElementById('lightbox').classList.contains('on')) return;
+  if(e.key==='Escape') document.getElementById('lightbox').classList.remove('on');
+  if(e.key==='ArrowLeft') document.getElementById('lbPrev').click();
+  if(e.key==='ArrowRight') document.getElementById('lbNext').click();
+});
 
 // Achica la foto en el navegador antes de mandarla (una foto de celu pesa
 // varios MB; así viaja rápido incluso con datos móviles).
@@ -284,7 +376,7 @@ function matchTexto(p, q){
 }
 
 function fotoBtnHtml(p){
-  var label = p.foto_url || state.fotosSubidas[p.id] ? '📷 Cambiar foto' : '📷 Sacar/subir foto';
+  var label = todasLasFotos(p).length ? '📷 Agregar otra foto' : '📷 Sacar/subir foto';
   return '<button class="fotobtn" data-foto="' + p.id + '">' + label + '</button>';
 }
 function subidaBadgeHtml(){
@@ -292,10 +384,12 @@ function subidaBadgeHtml(){
 }
 
 function cardHtml(p){
-  var fotoSubida = state.fotosSubidas[p.id];
-  var fotoUrl = fotoSubida || p.foto_url;
-  var fotoHtml = fotoUrl
-    ? '<img loading="lazy" src="' + fotoUrl + '" onerror="this.parentElement.innerHTML=\'<div class=noimg>Sin foto todavía</div>\'">' + (fotoSubida ? subidaBadgeHtml() : '')
+  var fotos = todasLasFotos(p);
+  var fotoSubida = (state.fotosSubidas[p.id]||[]).length > 0;
+  var fotoHtml = fotos.length
+    ? '<img loading="lazy" data-lightbox="' + p.id + '" src="' + fotos[0] + '" onerror="this.parentElement.innerHTML=\'<div class=noimg>Sin foto todavía</div>\'">' +
+      (fotoSubida ? subidaBadgeHtml() : '') +
+      (fotos.length>1 ? '<span class="fotomas">+' + (fotos.length-1) + '</span>' : '')
     : '<div class="noimg">Sin foto todavía</div>';
   fotoHtml += fotoBtnHtml(p);
   var precioHtml = '<span class="precio">' + (p.variantes.length>1?'<span class="desde">desde</span>':'') + fmtMoney(p.precio_desde, p.moneda) + '</span>';
@@ -345,10 +439,49 @@ function pintarTiers(p, pago){
   if(el) el.innerHTML = html;
 }
 
+function relevanciaScore(p, q){
+  if(!q) return 0;
+  q = q.toLowerCase();
+  var nombre = p.nombre_base.toLowerCase();
+  if(nombre === q) return 4;
+  if(nombre.indexOf(q) === 0) return 3;
+  if(p.variantes.some(function(v){ return String(v.codigo).toLowerCase() === q; })) return 3;
+  if(nombre.indexOf(q) >= 0) return 2;
+  return 1;
+}
+
+function ordenarLista(lista){
+  var q = state.filtro;
+  switch(state.orden){
+    case 'nombre':
+      return lista.slice().sort(function(a,b){ return a.nombre_base.localeCompare(b.nombre_base,'es'); });
+    case 'precio_asc':
+      return lista.slice().sort(function(a,b){
+        if(a.precio_desde==null) return 1;
+        if(b.precio_desde==null) return -1;
+        return a.precio_desde - b.precio_desde;
+      });
+    case 'precio_desc':
+      return lista.slice().sort(function(a,b){
+        if(a.precio_desde==null) return 1;
+        if(b.precio_desde==null) return -1;
+        return b.precio_desde - a.precio_desde;
+      });
+    case 'codigo':
+      return lista.slice().sort(function(a,b){ return String(a.id).localeCompare(String(b.id),'es',{numeric:true}); });
+    case 'populares':
+      return lista.slice().sort(function(a,b){ return (state.populares[b.id]||0) - (state.populares[a.id]||0); });
+    default: // relevancia: si hay búsqueda, por qué tan bien matchea; si no, orden de catálogo
+      if(!q) return lista;
+      return lista.slice().sort(function(a,b){ return relevanciaScore(b,q) - relevanciaScore(a,q); });
+  }
+}
+
 function renderGrid(){
   var lista = state.productos.filter(function(p){
     return (state.grupo==='Todos' || p.grupo===state.grupo) && matchTexto(p, state.filtro);
   });
+  lista = ordenarLista(lista);
   document.getElementById('hint').textContent = lista.length + ' producto' + (lista.length===1?'':'s');
   if(!lista.length){
     document.getElementById('grid').innerHTML = '<div class="vacio">No encontré nada con esa búsqueda.</div>';
@@ -364,7 +497,15 @@ function renderGrid(){
       if(det.classList.contains('on')){
         var p = lista.find(function(x){ return x.id===id; });
         pintarTiers(p, 'contado');
+        registrarVista(p);
       }
+    });
+  });
+  document.querySelectorAll('[data-lightbox]').forEach(function(img){
+    img.addEventListener('click', function(){
+      var id = img.getAttribute('data-lightbox');
+      var p = lista.find(function(x){ return x.id===id; });
+      abrirLightbox(todasLasFotos(p), 0);
     });
   });
   document.querySelectorAll('.pagobtn').forEach(function(btn){
@@ -419,6 +560,10 @@ document.getElementById('limpiar').addEventListener('click', function(){
   this.classList.remove('on');
   renderGrid();
 });
+document.getElementById('orden').addEventListener('change', function(e){
+  state.orden = e.target.value;
+  renderGrid();
+});
 
 fetch('productos.json')
   .then(function(r){ return r.json(); })
@@ -434,6 +579,11 @@ fetch('productos.json')
 
 cargarDolar();
 cargarFotosSubidas();
+cargarPopulares();
+// mientras el equipo está subiendo fotos en tanda, conviene ver rápido lo que
+// subieron los demás para no volver a fotografiar lo mismo.
+setInterval(cargarFotosSubidas, 20000);
+setInterval(cargarPopulares, 120000);
 </script>
 </body>
 </html>

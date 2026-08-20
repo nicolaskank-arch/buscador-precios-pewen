@@ -1,13 +1,17 @@
 /**
  * BUSCADOR DE PRECIOS PEWEN — Web App (Google Apps Script)
  * ------------------------------------------------------------
- * Recibe fotos que el equipo sube o saca desde el buscador (celu o PC),
- * las guarda en una carpeta de Drive y las anota en una planilla
- * (CODIGO -> URL). El buscador lee esa planilla al abrir y le pega la
- * foto a cada producto — sin pasar por vos, aparecen al toque.
+ * Dos cosas:
+ *  1) Recibe fotos que el equipo sube o saca desde el buscador (celu o PC),
+ *     las guarda en una carpeta de Drive y las anota en una planilla
+ *     (CODIGO -> URL, puede haber varias por código). El buscador lee esa
+ *     planilla al abrir (y cada tanto mientras sigue abierto) y arma la
+ *     galería de cada producto — sin pasar por vos, aparecen al toque.
+ *  2) Registra qué producto abre cada vendedor (con "Ver medidas y precios"),
+ *     para poder ordenar por "más buscados" más adelante.
  *
- * No hay moderación: lo que se sube se ve enseguida. Si alguna queda
- * mal, se borra la fila en la planilla o se pisa subiendo otra.
+ * No hay moderación de fotos: lo que se sube se ve enseguida. Si alguna
+ * queda mal, se borra la fila en la planilla o se pisa subiendo otra.
  * ------------------------------------------------------------
  */
 
@@ -19,51 +23,44 @@ var CONFIG = {
   // correr Ejecutar > verEnlaces.
   FOLDER_ID: '',
 
-  // Igual que arriba pero para la planilla índice CODIGO -> URL.
+  // Igual que arriba pero para la planilla índice CODIGO -> URL (y la de vistas).
   SHEET_ID: '',
-  TAB_NAME: 'Fotos Subidas',
+  TAB_FOTOS: 'Fotos Subidas',
+  TAB_VISTAS: 'Vistas',
 
-  CACHE_SECONDS: 60
+  // Bajo a propósito: el equipo va a estar subiendo fotos en tanda y no
+  // quiere ver la misma dos veces por llegar tarde el caché.
+  CACHE_SECONDS_FOTOS: 20,
+  CACHE_SECONDS_POPULARES: 300
 };
 
-// ====== SUBIR UNA FOTO (desde el buscador) ======
+// ====== SUBIR FOTO / REGISTRAR VISTA (desde el buscador) ======
 function doPost(e) {
   var out;
   try {
     var body = JSON.parse(e.postData.contents);
-    var codigo = String(body.codigo || '').trim();
-    var imagenBase64 = body.imagenBase64 || '';
-    var mimeType = body.mimeType || 'image/jpeg';
-    if (!codigo || !imagenBase64) throw new Error('Falta código o imagen.');
 
-    var carpeta = DriveApp.getFolderById(getFolderId());
-    var bytes = Utilities.base64Decode(imagenBase64);
-    var ext = mimeType.indexOf('png') >= 0 ? 'png' : 'jpg';
-    var nombreArchivo = codigo + '_' + Date.now() + '.' + ext;
-    var blob = Utilities.newBlob(bytes, mimeType, nombreArchivo);
-    var archivo = carpeta.createFile(blob);
-    archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-
-    var url = 'https://drive.google.com/thumbnail?id=' + archivo.getId() + '&sz=w1000';
-    anotarEnPlanilla(codigo, body.nombre || '', url, body.vendedor || '');
-
-    out = { ok: true, url: url };
-  } catch (err) {
-    out = { ok: false, error: String(err && err.message || err) };
-  }
-  return ContentService
-    .createTextOutput(JSON.stringify(out))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-// ====== LEER LAS FOTOS SUBIDAS (el buscador las pide al abrir) ======
-function doGet(e) {
-  var out;
-  try {
-    if (e && e.parameter && e.parameter.fotos === '1') {
-      out = { ok: true, fotos: getFotosSubidas() };
+    if (body.accion === 'vista') {
+      registrarVista(body.codigo, body.nombre || '');
+      out = { ok: true };
     } else {
-      out = { ok: true, msg: 'Buscador de Precios Pewen — backend de fotos.' };
+      var codigo = String(body.codigo || '').trim();
+      var imagenBase64 = body.imagenBase64 || '';
+      var mimeType = body.mimeType || 'image/jpeg';
+      if (!codigo || !imagenBase64) throw new Error('Falta código o imagen.');
+
+      var carpeta = DriveApp.getFolderById(getFolderId());
+      var bytes = Utilities.base64Decode(imagenBase64);
+      var ext = mimeType.indexOf('png') >= 0 ? 'png' : 'jpg';
+      var nombreArchivo = codigo + '_' + Date.now() + '.' + ext;
+      var blob = Utilities.newBlob(bytes, mimeType, nombreArchivo);
+      var archivo = carpeta.createFile(blob);
+      archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+      var url = 'https://drive.google.com/thumbnail?id=' + archivo.getId() + '&sz=w1600';
+      anotarFoto(codigo, body.nombre || '', url, body.vendedor || '');
+
+      out = { ok: true, url: url };
     }
   } catch (err) {
     out = { ok: false, error: String(err && err.message || err) };
@@ -73,34 +70,84 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ====== NÚCLEO ======
-function anotarEnPlanilla(codigo, nombre, url, vendedor) {
-  var sh = getSheet();
-  sh.appendRow([codigo, nombre, url, vendedor, nowIso()]);
-  CacheService.getScriptCache().remove('fotos_subidas_v1');
+// ====== LEER FOTOS SUBIDAS / POPULARES (el buscador las pide seguido) ======
+function doGet(e) {
+  var out;
+  try {
+    if (e && e.parameter && e.parameter.fotos === '1') {
+      out = { ok: true, fotos: getFotosSubidas() };
+    } else if (e && e.parameter && e.parameter.populares === '1') {
+      out = { ok: true, populares: getPopulares() };
+    } else {
+      out = { ok: true, msg: 'Buscador de Precios Pewen — backend.' };
+    }
+  } catch (err) {
+    out = { ok: false, error: String(err && err.message || err) };
+  }
+  return ContentService
+    .createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
+// ====== FOTOS ======
+function anotarFoto(codigo, nombre, url, vendedor) {
+  var sh = getSheet(CONFIG.TAB_FOTOS, ['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha']);
+  sh.appendRow([codigo, nombre, url, vendedor, nowIso()]);
+  CacheService.getScriptCache().remove('fotos_subidas_v2');
+}
+
+// Devuelve {codigo: [{url, vendedor, fecha}, ...]} — puede haber varias fotos
+// por código (más recientes al final); el buscador arma la galería con eso.
 function getFotosSubidas() {
   var cache = CacheService.getScriptCache();
-  var hit = cache.get('fotos_subidas_v1');
+  var hit = cache.get('fotos_subidas_v2');
   if (hit) { try { return JSON.parse(hit); } catch (e) {} }
 
-  var sh = getSheet();
+  var sh = getSheet(CONFIG.TAB_FOTOS, ['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha']);
   var vals = sh.getDataRange().getValues();
   var map = {};
-  // última fila de cada código gana: así una foto nueva pisa a la vieja.
   for (var r = 1; r < vals.length; r++) {
     var codigo = String(vals[r][0] || '').trim();
     var url = String(vals[r][2] || '').trim();
-    if (codigo && url) map[codigo] = url;
+    if (!codigo || !url) continue;
+    if (!map[codigo]) map[codigo] = [];
+    map[codigo].push({ url: url, vendedor: String(vals[r][3] || ''), fecha: String(vals[r][4] || '') });
   }
-  cache.put('fotos_subidas_v1', JSON.stringify(map), CONFIG.CACHE_SECONDS);
+  cache.put('fotos_subidas_v2', JSON.stringify(map), CONFIG.CACHE_SECONDS_FOTOS);
   return map;
 }
 
+// ====== VISTAS (para "más buscados") ======
+function registrarVista(codigo, nombre) {
+  codigo = String(codigo || '').trim();
+  if (!codigo) return;
+  var sh = getSheet(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Fecha']);
+  sh.appendRow([codigo, nombre, nowIso()]);
+}
+
+// Devuelve {codigo: cantidad_de_vistas}. Cache más largo: no hace falta que
+// sea al segundo, solo sirve para ordenar "más buscados".
+function getPopulares() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('populares_v1');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+
+  var sh = getSheet(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Fecha']);
+  var vals = sh.getDataRange().getValues();
+  var map = {};
+  for (var r = 1; r < vals.length; r++) {
+    var codigo = String(vals[r][0] || '').trim();
+    if (!codigo) continue;
+    map[codigo] = (map[codigo] || 0) + 1;
+  }
+  cache.put('populares_v1', JSON.stringify(map), CONFIG.CACHE_SECONDS_POPULARES);
+  return map;
+}
+
+// ====== NÚCLEO (persistencia entre pedidos) ======
 // Cada ejecución de Apps Script arranca "en blanco" (no hay variables globales
 // que sobrevivan entre pedidos): si CONFIG.FOLDER_ID/SHEET_ID están vacíos y
-// creáramos la carpeta/planilla al vuelo cada vez, cada subida generaría una
+// creáramos la carpeta/planilla al vuelo cada vez, cada pedido generaría una
 // carpeta y una planilla NUEVAS. PropertiesService sí persiste entre pedidos,
 // así que el ID se crea una sola vez la primera vez y de ahí en más se reusa.
 function getFolderId() {
@@ -114,22 +161,24 @@ function getFolderId() {
   return carpeta.getId();
 }
 
-function getSheet() {
-  var ss;
-  var sheetId = CONFIG.SHEET_ID;
-  if (!sheetId) sheetId = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
-  if (sheetId) {
-    ss = SpreadsheetApp.openById(sheetId);
-  } else {
-    ss = SpreadsheetApp.create('Buscador Precios Pewen - Fotos subidas');
-    PropertiesService.getScriptProperties().setProperty('SHEET_ID', ss.getId());
-    Logger.log('Creé la planilla "%s" (%s).', ss.getName(), ss.getId());
-  }
-  var sh = ss.getSheetByName(CONFIG.TAB_NAME);
+function getSpreadsheet() {
+  var sheetId = CONFIG.SHEET_ID || PropertiesService.getScriptProperties().getProperty('SHEET_ID');
+  if (sheetId) return SpreadsheetApp.openById(sheetId);
+  var ss = SpreadsheetApp.create('Buscador Precios Pewen - Fotos subidas');
+  PropertiesService.getScriptProperties().setProperty('SHEET_ID', ss.getId());
+  Logger.log('Creé la planilla "%s" (%s).', ss.getName(), ss.getId());
+  return ss;
+}
+
+function getSheet(tabName, encabezado) {
+  var ss = getSpreadsheet();
+  var sh = ss.getSheetByName(tabName);
   if (!sh) {
-    sh = ss.getSheets()[0];
-    sh.setName(CONFIG.TAB_NAME);
-    sh.appendRow(['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha']);
+    // primera pestaña: reusar la que trae la planilla nueva en vez de crear otra al pedo
+    var vacia = ss.getSheets().length === 1 && ss.getSheets()[0].getLastRow() === 0;
+    sh = vacia ? ss.getSheets()[0] : ss.insertSheet();
+    sh.setName(tabName);
+    sh.appendRow(encabezado);
   }
   return sh;
 }
@@ -138,7 +187,7 @@ function getSheet() {
 // directos a la carpeta y a la planilla que está usando el script ahora mismo.
 function verEnlaces() {
   Logger.log('Carpeta: https://drive.google.com/drive/folders/' + getFolderId());
-  Logger.log('Planilla: https://docs.google.com/spreadsheets/d/' + getSheet().getParent().getId());
+  Logger.log('Planilla: https://docs.google.com/spreadsheets/d/' + getSpreadsheet().getId());
 }
 
 function nowIso() {
