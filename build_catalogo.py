@@ -51,9 +51,31 @@ EXCLUDE_RUBROS = {
     "Revestimieto de Pileta",
 }
 
+# (rubro, linea) puntuales que hay que sacar del catalogo aunque su rubro en
+# general si entre: son accesorios/terminaciones sueltos dentro de un rubro
+# que por lo demas es piso de verdad (ej. "Baldosa Encastrable Deck WPC" trae
+# baldosas reales + los angulos/esquineros de esa misma baldosa).
+EXCLUDE_LINEAS = {
+    ("Baldosa Encastrable Deck WPC", "Angulos"),
+    ("homogeneos", "zocalos homogeneos"),
+    ("homogeneos", "accesorios homogeneos"),
+}
+
+# (rubro, linea) puntuales cuyo Rubro en la planilla es enganoso: comparten
+# rubro con un piso pero en realidad son revestimiento de pared (Slimstone/
+# Slimwood son placas decorativas de pared que quedaron cargadas como
+# "Placa SPC"; "pared homogeneo/heterogenea" son vinilico de PARED sueltos
+# dentro del rubro "homogeneos" que es mayormente piso).
+LINEA_GROUP_OVERRIDE = {
+    ("Placa SPC", "Slimstone"): "Revestimiento de pared",
+    ("Placa SPC", "Slimwood"): "Revestimiento de pared",
+    ("homogeneos", "pared heterogenea"): "Revestimiento de pared",
+    ("homogeneos", "pared homogeneo"): "Revestimiento de pared",
+}
+
 # Rubro -> grupo/categoria amigable para los chips del buscador.
 GROUP_MAP = [
-    (("Flotante",), "Flotante"),
+    (("Flotante", "ORCA"), "Flotante"),
     (("SPC", "Placa SPC"), "SPC"),
     (("LVT",), "LVT / Vinílico click"),
     (("Porcelanato",), "Porcelanato"),
@@ -66,7 +88,10 @@ GROUP_MAP = [
 ]
 
 
-def grupo_de(rubro):
+def grupo_de(rubro, linea):
+    override = LINEA_GROUP_OVERRIDE.get((rubro, linea))
+    if override:
+        return override
     for prefixes, grupo in GROUP_MAP:
         if any(rubro.startswith(p) or p in rubro for p in prefixes):
             return grupo
@@ -75,7 +100,7 @@ def grupo_de(rubro):
 
 # Rubro (o su prefijo) -> carpetas de Drive candidatas para buscar foto.
 FOLDER_MAP = [
-    (("Flotante",), ("Flotante", "0.PREVENTA", "escaneado", "nuevos tonos stock")),
+    (("Flotante", "ORCA"), ("Flotante", "0.PREVENTA", "escaneado", "nuevos tonos stock")),
     (("SPC", "Placa SPC"), ("SPC", "outlet", "nuevos tonos stock")),
     (("LVT",), ("LVT", "nueva sesion de fotos", "fotos guada vinilicos", "outlet")),
     (("Porcelanato",), ("Porcelanatos",)),
@@ -85,8 +110,14 @@ FOLDER_MAP = [
     (("Ceramico",), ("FOTOS DE PRODUCTOS",)),
     (("Vinilico", "VINILICO", "homogeneos", "rollo"), ("fotos guada vinilicos", "FOTOS DE PRODUCTOS")),
     (("DECO",), ("FOTOS DE PRODUCTOS", "fotos para publi")),
-    (("ORCA",), ("Flotante",)),
 ]
+
+LINEA_FOLDER_OVERRIDE = {
+    ("Placa SPC", "Slimstone"): ("Revestimiento Pared", "revs", "silenza"),
+    ("Placa SPC", "Slimwood"): ("Revestimiento Pared", "revs", "silenza"),
+    ("homogeneos", "pared heterogenea"): ("Revestimiento Pared", "revs", "silenza"),
+    ("homogeneos", "pared homogeneo"): ("Revestimiento Pared", "revs", "silenza"),
+}
 
 STOPWORDS = {
     "CON", "SIN", "PARA", "DEL", "LOS", "LAS", "UNA", "PISO", "PISOS", "OFERTA",
@@ -175,7 +206,10 @@ def copiar_thumb(foto):
     return "fotos/" + destino.name
 
 
-def folders_para_rubro(rubro):
+def folders_para_rubro(rubro, linea):
+    override = LINEA_FOLDER_OVERRIDE.get((rubro, linea))
+    if override:
+        return override
     for prefixes, folders in FOLDER_MAP:
         if any(rubro.startswith(p) or p in rubro for p in prefixes):
             return folders
@@ -183,7 +217,7 @@ def folders_para_rubro(rubro):
 
 
 def buscar_foto(rubro, linea, nombre, fotos_por_carpeta):
-    folders = folders_para_rubro(rubro)
+    folders = folders_para_rubro(rubro, linea)
     if not folders:
         return None
     linea_words = set(significant_words(linea))
@@ -223,21 +257,27 @@ def main():
 
     filas = []
     excluidas_rubro = 0
+    excluidas_linea = 0
     excluidas_sin_precio = 0
     for row in ws.iter_rows(min_row=3, max_row=ws.max_row, values_only=True):
         if row[COL_CODIGO] is None:
             continue
         rubro = (row[COL_RUBRO] or "").strip()
+        linea = (row[COL_LINEA] or "").strip()
         if rubro in EXCLUDE_RUBROS:
             excluidas_rubro += 1
+            continue
+        if (rubro, linea) in EXCLUDE_LINEAS:
+            excluidas_linea += 1
             continue
         if not row[COL_PRECIO]:
             excluidas_sin_precio += 1
             continue
         filas.append(row)
 
-    print(f"Filas totales con codigo: {excluidas_rubro + excluidas_sin_precio + len(filas)}")
+    print(f"Filas totales con codigo: {excluidas_rubro + excluidas_linea + excluidas_sin_precio + len(filas)}")
     print(f"  excluidas por rubro (zocalos/accesorios/etc): {excluidas_rubro}")
+    print(f"  excluidas por linea puntual (accesorios sueltos): {excluidas_linea}")
     print(f"  excluidas sin precio de lista: {excluidas_sin_precio}")
     print(f"  quedan: {len(filas)}")
 
@@ -305,7 +345,7 @@ def main():
             "id": codigo_str(primero[COL_CODIGO]),
             "nombre_base": nombre_base.title(),
             "rubro": rubro,
-            "grupo": grupo_de(rubro),
+            "grupo": grupo_de(rubro, linea),
             "linea": linea,
             "unidad": unidad_de(rubro),
             "moneda": moneda,
