@@ -149,6 +149,7 @@
       </div>
       <div class="orden">
         <select id="orden">
+          <option value="con_foto" selected>Con foto primero</option>
           <option value="relevancia">Relevancia</option>
           <option value="nombre">Nombre (A-Z)</option>
           <option value="precio_asc">Precio (menor a mayor)</option>
@@ -180,7 +181,7 @@
 // Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
 
-var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'relevancia', dolar: null, fotosSubidas: {}, populares: {} };
+var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', dolar: null, fotosSubidas: {}, populares: {} };
 
 function fmtMoney(v, moneda){
   if(v==null) return '—';
@@ -453,6 +454,11 @@ function relevanciaScore(p, q){
 function ordenarLista(lista){
   var q = state.filtro;
   switch(state.orden){
+    case 'con_foto':
+      // los que tienen foto primero (respeta el orden de catalogo dentro de cada grupo)
+      return lista.map(function(p,i){ return {p:p, i:i, foto: todasLasFotos(p).length>0}; })
+        .sort(function(a,b){ return (b.foto - a.foto) || (a.i - b.i); })
+        .map(function(x){ return x.p; });
     case 'nombre':
       return lista.slice().sort(function(a,b){ return a.nombre_base.localeCompare(b.nombre_base,'es'); });
     case 'precio_asc':
