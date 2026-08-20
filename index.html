@@ -159,6 +159,9 @@
         </select>
       </div>
     </div>
+    <div class="row">
+      <button class="chip" id="soloSinFoto">📷 Solo sin foto</button>
+    </div>
     <div class="chips" id="chips"></div>
   </div>
 </header>
@@ -181,7 +184,7 @@
 // Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
 
-var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', dolar: null, fotosSubidas: {}, populares: {} };
+var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, dolar: null, fotosSubidas: {}, populares: {} };
 
 function fmtMoney(v, moneda){
   if(v==null) return '—';
@@ -362,7 +365,7 @@ function renderChips(){
     html += '<button class="chip' + (state.grupo===g?' active':'') + '" data-g="' + g.replace(/"/g,'&quot;') + '">' + g + ' (' + set[g] + ')</button>';
   });
   document.getElementById('chips').innerHTML = html;
-  document.querySelectorAll('.chip').forEach(function(b){
+  document.querySelectorAll('#chips .chip').forEach(function(b){
     b.addEventListener('click', function(){ state.grupo = b.getAttribute('data-g'); renderChips(); renderGrid(); });
   });
 }
@@ -485,9 +488,13 @@ function ordenarLista(lista){
 
 function renderGrid(){
   var lista = state.productos.filter(function(p){
-    return (state.grupo==='Todos' || p.grupo===state.grupo) && matchTexto(p, state.filtro);
+    return (state.grupo==='Todos' || p.grupo===state.grupo) && matchTexto(p, state.filtro) &&
+      (!state.soloSinFoto || todasLasFotos(p).length===0);
   });
   lista = ordenarLista(lista);
+  var totalSinFoto = state.productos.filter(function(p){ return todasLasFotos(p).length===0; }).length;
+  document.getElementById('soloSinFoto').textContent = '📷 Solo sin foto (' + totalSinFoto + ')';
+  document.getElementById('soloSinFoto').classList.toggle('active', state.soloSinFoto);
   document.getElementById('hint').textContent = lista.length + ' producto' + (lista.length===1?'':'s');
   if(!lista.length){
     document.getElementById('grid').innerHTML = '<div class="vacio">No encontré nada con esa búsqueda.</div>';
@@ -568,6 +575,10 @@ document.getElementById('limpiar').addEventListener('click', function(){
 });
 document.getElementById('orden').addEventListener('change', function(e){
   state.orden = e.target.value;
+  renderGrid();
+});
+document.getElementById('soloSinFoto').addEventListener('click', function(){
+  state.soloSinFoto = !state.soloSinFoto;
   renderGrid();
 });
 
