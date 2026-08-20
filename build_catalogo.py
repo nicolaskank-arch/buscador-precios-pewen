@@ -165,6 +165,13 @@ def significant_words(nombre):
     return words
 
 
+def _suma_stock(variantes):
+    valores = [v["stock"] for v in variantes if v["stock"] is not None]
+    if not valores:
+        return None
+    return sum(valores)  # puede dar 0 (legitimo: algunas medidas sin stock, otras con dato)
+
+
 def num_or_none(v):
     if isinstance(v, (int, float)):
         return round(v, 2)
@@ -259,6 +266,7 @@ def main():
     excluidas_rubro = 0
     excluidas_linea = 0
     excluidas_sin_precio = 0
+    excluidas_sin_stock = 0
     for row in ws.iter_rows(min_row=3, max_row=ws.max_row, values_only=True):
         if row[COL_CODIGO] is None:
             continue
@@ -273,12 +281,20 @@ def main():
         if not row[COL_PRECIO]:
             excluidas_sin_precio += 1
             continue
+        # Stock=0 confirmado (no vacio/sin dato) -> no se muestra, no hay para vender.
+        # Si no hay dato de stock (columna vacia), se deja: no es lo mismo "sin stock"
+        # que "no llevamos ese dato para este producto".
+        stock_val = row[COL_STOCK]
+        if isinstance(stock_val, (int, float)) and stock_val == 0:
+            excluidas_sin_stock += 1
+            continue
         filas.append(row)
 
-    print(f"Filas totales con codigo: {excluidas_rubro + excluidas_linea + excluidas_sin_precio + len(filas)}")
+    print(f"Filas totales con codigo: {excluidas_rubro + excluidas_linea + excluidas_sin_precio + excluidas_sin_stock + len(filas)}")
     print(f"  excluidas por rubro (zocalos/accesorios/etc): {excluidas_rubro}")
     print(f"  excluidas por linea puntual (accesorios sueltos): {excluidas_linea}")
     print(f"  excluidas sin precio de lista: {excluidas_sin_precio}")
+    print(f"  excluidas por stock=0: {excluidas_sin_stock}")
     print(f"  quedan: {len(filas)}")
 
     grupos = defaultdict(list)
@@ -350,7 +366,7 @@ def main():
             "unidad": unidad_de(rubro),
             "moneda": moneda,
             "precio_desde": min((v["precio_venta"] for v in variantes if v["precio_venta"] is not None), default=None),
-            "stock_total": sum(v["stock"] for v in variantes if v["stock"] is not None) or None,
+            "stock_total": _suma_stock(variantes),
             "foto_url": foto_local,
             "foto_drive_url": foto["url"] if foto else None,
             "variantes": variantes,
