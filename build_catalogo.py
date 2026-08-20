@@ -49,16 +49,20 @@ EXCLUDE_RUBROS = {
     "Bajo Piso", "Servicios", "ACOPIO", "cesped", "Accesorios Quick-Step",
     "AUTOPOSANTE", "Limipiador SPC", "IMPRIMACION", "autonivelante",
     "Revestimieto de Pileta",
+    # DECO son objetos de decoracion (bandejas, botellas, etc.), no piso ni pared.
+    "DECO",
 }
 
 # (rubro, linea) puntuales que hay que sacar del catalogo aunque su rubro en
 # general si entre: son accesorios/terminaciones sueltos dentro de un rubro
 # que por lo demas es piso de verdad (ej. "Baldosa Encastrable Deck WPC" trae
-# baldosas reales + los angulos/esquineros de esa misma baldosa).
+# baldosas reales + los angulos/esquineros de esa misma baldosa; "ATRIM" dentro
+# de Porcelanato son varillas/perfiles de aluminio, no porcelanato).
 EXCLUDE_LINEAS = {
     ("Baldosa Encastrable Deck WPC", "Angulos"),
     ("homogeneos", "zocalos homogeneos"),
     ("homogeneos", "accesorios homogeneos"),
+    ("Porcelanato", "ATRIM"),
 }
 
 # (rubro, linea) puntuales cuyo Rubro en la planilla es enganoso: comparten
@@ -84,7 +88,6 @@ GROUP_MAP = [
     (("Revestimiento Pared",), "Revestimiento de pared"),
     (("Ceramico",), "Cerámico"),
     (("Vinilico", "VINILICO", "homogeneos", "rollo"), "Vinílico rollo/pegar"),
-    (("DECO",), "Deco"),
 ]
 
 
@@ -109,7 +112,6 @@ FOLDER_MAP = [
     (("Piso Ingenieria", "Prefinish", "Undfinish", "Tablones"), ("FOTOS DE PRODUCTOS", "catalogos")),
     (("Ceramico",), ("FOTOS DE PRODUCTOS",)),
     (("Vinilico", "VINILICO", "homogeneos", "rollo"), ("fotos guada vinilicos", "FOTOS DE PRODUCTOS")),
-    (("DECO",), ("FOTOS DE PRODUCTOS", "fotos para publi")),
 ]
 
 LINEA_FOLDER_OVERRIDE = {
