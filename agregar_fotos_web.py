@@ -27,6 +27,17 @@ Reglas (mismas que agregar_fotos_pdf.py):
   - Re-corrible: si se vuelve a correr, los productos que ya tienen foto_url
     (de esta fuente o de cualquier otra) se saltean.
 
+  EXCEPCION -- REEMPLAZOS_FORZADOS (20/08/2026): estos 29 ids SI pueden
+  pisar una foto_url existente. Son productos cuya foto venia de
+  pisosalemanes.com con la marca de agua "PISOS ALEMANES" bien visible y
+  centrada (no se puede tapar con un logo chico); se busco el mismo
+  diseno/tono sin marca de agua en pewenpisos.com.ar / maxipiso.com.ar
+  (coincidencia de codigo de diseno o SKU exacto, mas 4 verificados a mano
+  por titulo/specs cuando el codigo no alcanzaba) y fotos_web_encontradas.json
+  ya tiene la URL nueva para estos ids. Cualquier otro id que ya tenga
+  foto_url (las otras ~631 fotos de Drive/PDF/otros sitios web) se sigue
+  salteando como siempre -- esto NO es un flag general para pisar fotos.
+
 Uso:
     python agregar_fotos_web.py
 """
@@ -39,6 +50,13 @@ PRODUCTOS_JSON = HERE / "productos.json"
 SIN_FOTO_CSV = HERE / "SIN-FOTO.csv"
 FOTOS_WEB_JSON = HERE / "fotos_web_encontradas.json"
 
+REEMPLAZOS_FORZADOS = {
+    "18247", "20377", "24648", "24650", "24653", "18941", "17271", "19021",
+    "19029", "24644", "5263", "18188", "19376", "23771", "23772", "24781",
+    "24783", "25316", "25318", "25319", "25472", "25372", "25373", "23063",
+    "22899", "18422", "25341", "23516", "23233",
+}
+
 
 def main():
     encontradas = json.loads(FOTOS_WEB_JSON.read_text(encoding="utf-8"))
@@ -49,6 +67,7 @@ def main():
     by_id = {p["id"]: p for p in productos}
 
     aplicadas = 0
+    reemplazadas = 0
     saltadas_ya_tenian = 0
     saltadas_id_inexistente = 0
     por_sitio = {}
@@ -58,9 +77,14 @@ def main():
         if p is None:
             saltadas_id_inexistente += 1
             continue
-        if p.get("foto_url"):
+        es_reemplazo_forzado = pid in REEMPLAZOS_FORZADOS
+        if p.get("foto_url") and not es_reemplazo_forzado:
             saltadas_ya_tenian += 1
             continue
+        if es_reemplazo_forzado and p.get("foto_url"):
+            fuente_anterior = p.get("foto_fuente_sitio")
+            print(f"  reemplazo forzado: {pid} ({p['nombre_base'][:45]}) {fuente_anterior} -> {info['fuente']}")
+            reemplazadas += 1
         p["foto_url"] = info["url"]
         p["foto_fuente"] = "web"
         p["foto_fuente_sitio"] = info["fuente"]
@@ -68,6 +92,8 @@ def main():
         por_sitio[info["fuente"]] = por_sitio.get(info["fuente"], 0) + 1
 
     print(f"Fotos aplicadas ahora: {aplicadas}")
+    if reemplazadas:
+        print(f"  de las cuales son reemplazos forzados (pisaron una foto existente): {reemplazadas}")
     if saltadas_ya_tenian:
         print(f"  saltadas (ya tenian foto de otra fuente): {saltadas_ya_tenian}")
     if saltadas_id_inexistente:
