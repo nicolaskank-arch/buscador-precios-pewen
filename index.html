@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buscador de Precios Pewen</title>
+<meta name="description" content="Buscador interno de precios por tipo de piso, material y detalle — Pewen">
+<style>
+  :root{
+    --negro:#131110; --negro2:#241f1a; --oro:#f6b446; --oro2:#fbb748; --oro-dark:#b7791a;
+    --bg:#f4f1ec; --card:#ffffff; --txt:#211f1b; --muted:#7a746a;
+    --linea:#e8e3da; --sombra:0 2px 12px rgba(20,15,10,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{position:sticky;top:0;z-index:20;background:var(--negro);color:#fff;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom,0));box-shadow:0 2px 14px rgba(0,0,0,.25);
+    border-bottom:3px solid var(--oro)}
+  .top{display:flex;align-items:center;gap:11px}
+  .brand{flex:1;line-height:1}
+  .brand .t1{font-size:18px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+  .brand .t1 b{color:var(--oro);font-weight:800}
+  .brand .t2{font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:rgba(255,255,255,.55);
+    margin-top:2px;white-space:nowrap}
+  .rightbox{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:0 0 auto}
+  .dolar{font-size:11px;color:rgba(255,255,255,.7);white-space:nowrap}
+  .dolar b{color:var(--oro)}
+  .controls{max-width:1240px;margin:0 auto;padding:10px 0 4px}
+  .row{display:flex;gap:8px;margin-top:10px}
+  .buscawrap{flex:1;min-width:0;position:relative;display:flex}
+  .row input{flex:1;min-width:0;width:100%;border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.10);color:#fff;border-radius:10px;padding:12px 34px 12px 12px;
+    font-size:16px}
+  .row input::placeholder{color:rgba(255,255,255,.6)}
+  .row input:focus{outline:none;border-color:var(--oro);background:rgba(255,255,255,.16)}
+  .limpiar{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);
+    border:0;color:#fff;width:30px;height:30px;border-radius:50%;font-size:17px;line-height:1;
+    cursor:pointer;display:none}
+  .limpiar.on{display:block}
+  .chips{display:flex;gap:7px;overflow-x:auto;padding:11px 0 2px;-webkit-overflow-scrolling:touch}
+  .chip{white-space:nowrap;border:0;border-radius:999px;padding:11px 15px;font-size:13.5px;font-weight:600;
+    background:rgba(255,255,255,.12);color:#fff;cursor:pointer;min-height:42px}
+  .chip.active{background:var(--oro);color:var(--negro);font-weight:800}
+  @media (min-width:900px) and (hover:hover) and (pointer:fine){
+    header{padding:0 14px}
+    .controls{padding:7px 0 3px}
+    .brand .t1{font-size:15.5px;letter-spacing:1.2px}
+    .brand .t2{font-size:8.5px}
+    .row{margin-top:7px;gap:7px}
+    .row input{padding:8px 34px 8px 11px;font-size:13.5px;border-radius:9px}
+    .limpiar{width:24px;height:24px;font-size:15px}
+    .chips{flex-wrap:wrap;overflow-x:visible;gap:6px;padding:8px 0 1px}
+    .chip{padding:5px 12px;font-size:12.5px;min-height:30px}
+  }
+  main{max-width:1240px;margin:0 auto;padding:14px 12px 60px}
+  .hint{color:var(--muted);font-size:13px;margin:2px 4px 12px}
+  .grid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:620px){.grid{grid-template-columns:1fr 1fr}}
+  @media(min-width:1100px){.grid{grid-template-columns:1fr 1fr 1fr}}
+  .card{background:var(--card);border:1px solid var(--linea);border-radius:14px;overflow:hidden;
+    box-shadow:var(--sombra);display:flex;flex-direction:column}
+  .ph{position:relative;background:#efeae1;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .ph .noimg{color:#b7ae9e;font-size:13px;text-align:center;padding:0 10px}
+  .catlabel{position:absolute;top:8px;left:8px;background:var(--oro);color:var(--negro);
+    font-size:10.5px;font-weight:800;letter-spacing:.4px;padding:4px 8px;border-radius:6px;text-transform:uppercase}
+  .body{padding:11px 12px 12px}
+  .nombre{font-size:15.5px;font-weight:800;line-height:1.25;margin:0 0 3px}
+  .sub{font-size:12px;color:var(--muted);margin-bottom:9px}
+  .precio-row{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+  .precio{font-size:19px;font-weight:800;color:var(--oro-dark)}
+  .precio .desde{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-right:3px}
+  .ars-equiv{font-size:12px;color:var(--muted)}
+  .pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+  .pill{font-size:11.5px;font-weight:700;padding:5px 9px;border-radius:8px;background:#f0ede6;color:#5c5648}
+  .pill.medidas{background:#eef0f2;color:#4a5560}
+  .pill.stock{background:#e7f5ec;color:#2f8f4e}
+  .detalle-btn{width:100%;border:1px solid var(--linea);background:#f3efe7;color:var(--oro-dark);
+    font-size:13px;font-weight:800;padding:10px;border-radius:9px;cursor:pointer;min-height:42px}
+  .detalle-btn:active{transform:scale(.98)}
+  .detalle{display:none;margin-top:10px;border-top:1px solid var(--linea);padding-top:10px}
+  .detalle.on{display:block}
+  table.variantes{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:10px}
+  table.variantes th,table.variantes td{text-align:left;padding:5px 4px;border-bottom:1px solid var(--linea)}
+  table.variantes th{color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase}
+  .pagos{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+  .pagobtn{border:1px solid var(--linea);background:#fff;color:var(--txt);font-size:11.5px;font-weight:700;
+    padding:6px 9px;border-radius:7px;cursor:pointer}
+  .pagobtn.active{background:var(--negro);color:var(--oro);border-color:var(--negro)}
+  table.tiers{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.tiers td{padding:4px;border-bottom:1px dashed var(--linea)}
+  table.tiers td:last-child{text-align:right;font-weight:700}
+  .copiar{width:100%;border:0;background:var(--negro);color:var(--oro);padding:11px 10px;border-radius:9px;
+    font-size:13px;font-weight:800;cursor:pointer;margin-top:8px}
+  .copiar:active{transform:scale(.98)}
+  .vacio{text-align:center;color:var(--muted);padding:50px 10px;font-size:14px}
+  .fotobtn{position:absolute;right:7px;bottom:7px;background:rgba(19,17,16,.78);color:#fff;border:0;
+    border-radius:999px;padding:7px 11px;font-size:11.5px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;gap:5px}
+  .fotobtn:active{transform:scale(.96)}
+  .subidapor{position:absolute;left:8px;bottom:7px;background:rgba(47,143,78,.9);color:#fff;
+    font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px}
+  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--negro);color:#fff;
+    padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.3);
+    z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="t1"><b>PEWEN</b> PRECIOS</div>
+      <div class="t2">Buscador interno — equipo de ventas</div>
+    </div>
+    <div class="rightbox">
+      <div class="dolar" id="dolar">cotización…</div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="row">
+      <div class="buscawrap">
+        <input id="buscar" type="text" placeholder="Buscar por nombre, código o línea…" autocomplete="off">
+        <button class="limpiar" id="limpiar">×</button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+<main>
+  <div class="hint" id="hint"></div>
+  <div class="grid" id="grid"></div>
+</main>
+<div class="toast" id="toast"></div>
+<input type="file" id="fotoInput" accept="image/*" capture="environment" style="display:none">
+
+<script>
+// Pegá acá la URL /exec de tu Web App (ver apps-script/Codigo.gs + GUIA-DEPLOY).
+// Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
+
+var state = { productos: [], filtro: '', grupo: 'Todos', dolar: null, fotosSubidas: {} };
+
+function fmtMoney(v, moneda){
+  if(v==null) return '—';
+  var s = v.toLocaleString('es-AR', {maximumFractionDigits: (moneda==='USD'?2:0)});
+  return (moneda==='USD'?'US$ ':moneda==='EUR'?'€ ':'$ ') + s;
+}
+
+function arsEquiv(precioUsd){
+  if(!state.dolar) return '';
+  var ars = precioUsd * state.dolar;
+  return '≈ $ ' + ars.toLocaleString('es-AR',{maximumFractionDigits:0}) + ' ARS';
+}
+
+function cargarDolar(){
+  var cache = localStorage.getItem('bp_dolar');
+  if(cache){
+    try{ var c = JSON.parse(cache); state.dolar = c.venta; pintarDolar(); }catch(e){}
+  }
+  fetch('https://dolarapi.com/v1/dolares/oficial')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      state.dolar = d.venta;
+      localStorage.setItem('bp_dolar', JSON.stringify({venta:d.venta, t:Date.now()}));
+      pintarDolar();
+      renderGrid();
+    })
+    .catch(function(){ if(!state.dolar) document.getElementById('dolar').textContent = 'sin cotización'; });
+}
+function pintarDolar(){
+  document.getElementById('dolar').innerHTML = 'USD oficial <b>$' + Math.round(state.dolar).toLocaleString('es-AR') + '</b>';
+}
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toast._h);
+  toast._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
+}
+
+function cargarFotosSubidas(){
+  if(!SCRIPT_URL) return;
+  var cache = localStorage.getItem('bp_fotos_subidas');
+  if(cache){ try{ state.fotosSubidas = JSON.parse(cache); }catch(e){} }
+  fetch(SCRIPT_URL + '?fotos=1')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d || !d.ok) return;
+      state.fotosSubidas = d.fotos || {};
+      localStorage.setItem('bp_fotos_subidas', JSON.stringify(state.fotosSubidas));
+      renderGrid();
+    })
+    .catch(function(){});
+}
+
+// Achica la foto en el navegador antes de mandarla (una foto de celu pesa
+// varios MB; así viaja rápido incluso con datos móviles).
+function comprimirImagen(file){
+  return new Promise(function(resolve, reject){
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function(){
+      var MAX = 1600;
+      var w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        if(w > h){ h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function subirFoto(p, file){
+  if(!SCRIPT_URL){
+    toast('Falta configurar SCRIPT_URL (ver README) para poder subir fotos.');
+    return;
+  }
+  var v = p.variantes[0];
+  toast('Subiendo foto…');
+  comprimirImagen(file).then(function(img){
+    // vista previa al toque, antes de que confirme el servidor
+    var localUrl = URL.createObjectURL(file);
+    var card = document.querySelector('.card[data-id="' + p.id + '"] .ph');
+    if(card) card.innerHTML = '<span class="catlabel">' + p.grupo + '</span><img src="' + localUrl + '">' + fotoBtnHtml(p) + subidaBadgeHtml();
+
+    return fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        codigo: p.id,
+        nombre: p.nombre_base,
+        imagenBase64: img.base64,
+        mimeType: img.mimeType,
+        vendedor: localStorage.getItem('bp_vendedor') || ''
+      })
+    });
+  }).then(function(){
+    toast('¡Foto subida! Ya la ven todos.');
+    // no-cors no deja leer la respuesta: refrescamos el índice para confirmar.
+    setTimeout(cargarFotosSubidas, 1500);
+  }).catch(function(){
+    toast('No se pudo subir. Revisá la conexión e intentá de nuevo.');
+  });
+}
+
+function grupos(){
+  var set = {};
+  state.productos.forEach(function(p){ set[p.grupo] = (set[p.grupo]||0) + 1; });
+  return set;
+}
+
+function renderChips(){
+  var set = grupos();
+  var orden = Object.keys(set).sort(function(a,b){ return set[b]-set[a]; });
+  var html = '<button class="chip' + (state.grupo==='Todos'?' active':'') + '" data-g="Todos">Todos (' + state.productos.length + ')</button>';
+  orden.forEach(function(g){
+    html += '<button class="chip' + (state.grupo===g?' active':'') + '" data-g="' + g.replace(/"/g,'&quot;') + '">' + g + ' (' + set[g] + ')</button>';
+  });
+  document.getElementById('chips').innerHTML = html;
+  document.querySelectorAll('.chip').forEach(function(b){
+    b.addEventListener('click', function(){ state.grupo = b.getAttribute('data-g'); renderChips(); renderGrid(); });
+  });
+}
+
+function matchTexto(p, q){
+  if(!q) return true;
+  q = q.toLowerCase();
+  if(p.nombre_base.toLowerCase().indexOf(q)>=0) return true;
+  if((p.linea||'').toLowerCase().indexOf(q)>=0) return true;
+  if((p.rubro||'').toLowerCase().indexOf(q)>=0) return true;
+  return p.variantes.some(function(v){ return String(v.codigo).indexOf(q)>=0; });
+}
+
+function fotoBtnHtml(p){
+  var label = p.foto_url || state.fotosSubidas[p.id] ? '📷 Cambiar foto' : '📷 Sacar/subir foto';
+  return '<button class="fotobtn" data-foto="' + p.id + '">' + label + '</button>';
+}
+function subidaBadgeHtml(){
+  return '<span class="subidapor">Foto del equipo</span>';
+}
+
+function cardHtml(p){
+  var fotoSubida = state.fotosSubidas[p.id];
+  var fotoUrl = fotoSubida || p.foto_url;
+  var fotoHtml = fotoUrl
+    ? '<img loading="lazy" src="' + fotoUrl + '" onerror="this.parentElement.innerHTML=\'<div class=noimg>Sin foto todavía</div>\'">' + (fotoSubida ? subidaBadgeHtml() : '')
+    : '<div class="noimg">Sin foto todavía</div>';
+  fotoHtml += fotoBtnHtml(p);
+  var precioHtml = '<span class="precio">' + (p.variantes.length>1?'<span class="desde">desde</span>':'') + fmtMoney(p.precio_desde, p.moneda) + '</span>';
+  var arsHtml = p.moneda==='USD' ? '<span class="ars-equiv">' + arsEquiv(p.precio_desde) + '</span>' : '';
+  var pills = '';
+  if(p.variantes.length>1) pills += '<span class="pill medidas">' + p.variantes.length + ' medidas</span>';
+  else if(p.variantes[0].medidas) pills += '<span class="pill medidas">' + p.variantes[0].medidas + '</span>';
+  if(p.stock_total) pills += '<span class="pill stock">stock ' + Math.round(p.stock_total) + '</span>';
+  pills += '<span class="pill">' + p.unidad + '</span>';
+
+  var variantesRows = p.variantes.map(function(v){
+    return '<tr><td>' + (v.medidas||'—') + '</td><td>' + v.codigo + '</td><td>' + fmtMoney(v.precio_venta, v.moneda) + '</td></tr>';
+  }).join('');
+
+  var pagoBtns = ['contado','tarjeta1','tarjeta3','tarjeta6','tarjeta12'].map(function(k,i){
+    var label = {contado:'Contado',tarjeta1:'Tarjeta 1p',tarjeta3:'3 pagos',tarjeta6:'6 pagos',tarjeta12:'12 pagos'}[k];
+    return '<button class="pagobtn' + (i===0?' active':'') + '" data-pago="' + k + '">' + label + '</button>';
+  }).join('');
+
+  return '<div class="card" data-id="' + p.id + '">' +
+    '<div class="ph"><span class="catlabel">' + p.grupo + '</span>' + fotoHtml + '</div>' +
+    '<div class="body">' +
+      '<div class="nombre">' + p.nombre_base + '</div>' +
+      '<div class="sub">' + (p.linea ? p.linea + ' — ' : '') + p.rubro + '</div>' +
+      '<div class="precio-row">' + precioHtml + arsHtml + '</div>' +
+      '<div class="pills">' + pills + '</div>' +
+      '<button class="detalle-btn" data-toggle="' + p.id + '">Ver medidas y precios</button>' +
+      '<div class="detalle" id="det-' + p.id + '">' +
+        '<table class="variantes"><thead><tr><th>Medida</th><th>Código</th><th>Precio (0-50m², contado)</th></tr></thead><tbody>' + variantesRows + '</tbody></table>' +
+        '<div class="pagos">' + pagoBtns + '</div>' +
+        '<table class="tiers" id="tiers-' + p.id + '"></table>' +
+        '<button class="copiar" data-copy="' + p.id + '">Copiar para WhatsApp</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function pintarTiers(p, pago){
+  var v = p.variantes[0];
+  var precios = v.precios[pago] || [];
+  var labels = state.tierLabels;
+  var moneda = v.moneda;
+  var html = precios.map(function(val,i){
+    return '<tr><td>' + labels[i] + '</td><td>' + fmtMoney(val, moneda) + '</td></tr>';
+  }).join('');
+  var el = document.getElementById('tiers-' + p.id);
+  if(el) el.innerHTML = html;
+}
+
+function renderGrid(){
+  var lista = state.productos.filter(function(p){
+    return (state.grupo==='Todos' || p.grupo===state.grupo) && matchTexto(p, state.filtro);
+  });
+  document.getElementById('hint').textContent = lista.length + ' producto' + (lista.length===1?'':'s');
+  if(!lista.length){
+    document.getElementById('grid').innerHTML = '<div class="vacio">No encontré nada con esa búsqueda.</div>';
+    return;
+  }
+  document.getElementById('grid').innerHTML = lista.map(cardHtml).join('');
+
+  document.querySelectorAll('[data-toggle]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-toggle');
+      var det = document.getElementById('det-' + id);
+      det.classList.toggle('on');
+      if(det.classList.contains('on')){
+        var p = lista.find(function(x){ return x.id===id; });
+        pintarTiers(p, 'contado');
+      }
+    });
+  });
+  document.querySelectorAll('.pagobtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.card');
+      var id = card.getAttribute('data-id');
+      var p = lista.find(function(x){ return x.id===id; });
+      card.querySelectorAll('.pagobtn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      pintarTiers(p, btn.getAttribute('data-pago'));
+    });
+  });
+  document.querySelectorAll('[data-foto]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var id = btn.getAttribute('data-foto');
+      var p = lista.find(function(x){ return x.id===id; });
+      pendienteFoto = p;
+      document.getElementById('fotoInput').click();
+    });
+  });
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-copy');
+      var p = lista.find(function(x){ return x.id===id; });
+      var v = p.variantes[0];
+      var txt = p.nombre_base + (v.medidas?(' — '+v.medidas):'') + '\nCódigo: ' + v.codigo +
+        '\nPrecio: ' + fmtMoney(v.precio_venta, v.moneda) + (v.moneda==='USD' ? ' (' + arsEquiv(v.precio_venta) + ')' : '');
+      navigator.clipboard.writeText(txt).then(function(){
+        btn.textContent = 'Copiado ✓';
+        setTimeout(function(){ btn.textContent = 'Copiar para WhatsApp'; }, 1500);
+      });
+    });
+  });
+}
+
+var pendienteFoto = null;
+document.getElementById('fotoInput').addEventListener('change', function(e){
+  var file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if(file && pendienteFoto) subirFoto(pendienteFoto, file);
+});
+
+document.getElementById('buscar').addEventListener('input', function(e){
+  state.filtro = e.target.value;
+  document.getElementById('limpiar').classList.toggle('on', !!state.filtro);
+  renderGrid();
+});
+document.getElementById('limpiar').addEventListener('click', function(){
+  state.filtro = '';
+  document.getElementById('buscar').value = '';
+  this.classList.remove('on');
+  renderGrid();
+});
+
+fetch('productos.json')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    state.productos = d.productos;
+    state.tierLabels = d.tier_labels;
+    renderChips();
+    renderGrid();
+  })
+  .catch(function(err){
+    document.getElementById('grid').innerHTML = '<div class="vacio">No pude cargar productos.json — ¿lo generaste con build_catalogo.py?</div>';
+  });
+
+cargarDolar();
+cargarFotosSubidas();
+</script>
+</body>
+</html>

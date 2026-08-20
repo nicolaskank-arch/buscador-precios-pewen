@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía — Poner en marcha el Buscador de Precios</title>
+<style>
+  :root{--negro:#131110;--oro:#b7791a;--oro2:#f6b446;--bg:#f4f1ec;--card:#fff;--txt:#211f1b;--muted:#7a746a;--linea:#e8e3da}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+  header{background:var(--negro);color:#fff;padding:26px 20px;border-bottom:3px solid var(--oro2)}
+  header .w{max-width:820px;margin:0 auto}
+  header h1{margin:0 0 4px;font-size:22px}
+  header p{margin:0;opacity:.85;font-size:14px}
+  main{max-width:820px;margin:0 auto;padding:22px 18px 60px}
+  .parte{background:var(--card);border:1px solid var(--linea);border-radius:14px;padding:20px 22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .parte h2{margin:0 0 4px;color:var(--oro);font-size:18px;display:flex;align-items:center;gap:10px}
+  .parte h2 .n{background:var(--oro);color:#fff;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 28px}
+  .parte .lead{color:var(--muted);font-size:13.5px;margin:0 0 14px 38px}
+  ol{margin:0 0 0 38px;padding-left:18px}
+  ol li{margin-bottom:11px}
+  code{background:#f0ede6;padding:2px 6px;border-radius:5px;font-size:13px;word-break:break-all}
+  .tip{background:#fbf3e0;border-left:4px solid var(--oro2);padding:10px 14px;border-radius:8px;font-size:13.5px;margin:12px 0 0 38px}
+  .warn{background:#fbeeea;border-left:4px solid #c9772a;padding:10px 14px;border-radius:8px;font-size:13.5px;margin:12px 0 0 38px}
+  b{color:var(--oro)}
+  .foot{color:var(--muted);font-size:12.5px;text-align:center;margin-top:24px}
+  a{color:var(--oro)}
+  table{border-collapse:collapse;margin:8px 0 0 38px;font-size:13px}
+  th,td{border:1px solid var(--linea);padding:6px 12px;text-align:left}
+  th{background:#f0ede6}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <h1>Buscador de Precios Pewen — Guía de puesta en marcha</h1>
+  <p>Tres partes. Se hacen una sola vez. Después queda andando solo.</p>
+</div></header>
+<main>
+
+  <div class="parte">
+    <h2><span class="n">A</span> Conectar la subida de fotos (Apps Script)</h2>
+    <p class="lead">Es lo que permite que cada vendedor saque o suba una foto desde el buscador y la vean todos. Sin este paso el buscador funciona igual, pero sin poder subir fotos nuevas.</p>
+    <ol>
+      <li>Entrá a <a href="https://script.google.com" target="_blank">script.google.com</a> con tu cuenta y tocá <b>Nuevo proyecto</b>.</li>
+      <li>Borrá lo que haya y pegá TODO el contenido de <code>apps-script/Codigo.gs</code>. Guardá (💾).</li>
+      <li>Arriba a la derecha: <b>Implementar → Nueva implementación</b>. En el engranaje ⚙ elegí <b>Aplicación web</b>.</li>
+      <li>Configurá:
+        <table>
+          <tr><th>Ejecutar como</th><td>Yo (tu cuenta)</td></tr>
+          <tr><th>Quién tiene acceso</th><td>Cualquier persona</td></tr>
+        </table>
+      </li>
+      <li>Tocá <b>Implementar</b>. Te va a pedir permiso para Drive y Sheets → <b>Permitir</b> (si dice "no verificado", entrá por <i>Configuración avanzada → Ir al proyecto</i>).</li>
+      <li>Copiá la <b>URL de la aplicación web</b> (termina en <code>/exec</code>). Guardala, la pegás en el paso C.</li>
+    </ol>
+    <div class="tip">Primer uso: en el editor de Apps Script corré <b>Ejecutar → subirFotoDePrueba</b> y mirá el <b>Registro</b> (Ver → Registros). Te va a mostrar el ID de la carpeta y de la planilla que creó solo — no hace falta que hagas nada con eso, es solo para confirmar que anduvo.</div>
+    <div class="warn">Cada vez que <b>cambies el código</b> del script tenés que <b>Implementar → Gestionar implementaciones → ✏️ → Nueva versión</b> para que se aplique.</div>
+  </div>
+
+  <div class="parte">
+    <h2><span class="n">B</span> Las fotos que ya vienen (Drive + catálogos)</h2>
+    <p class="lead">Esto no requiere nada tuyo: <code>build_catalogo.py</code> ya le puso foto a los productos que matchean con confianza contra tu Drive. Lo que falta queda en <code>SIN-FOTO.csv</code> — se va completando con las fotos que suba el equipo (parte A) o corriendo el script de nuevo cuando aparezcan fotos nuevas en Drive.</p>
+  </div>
+
+  <div class="parte">
+    <h2><span class="n">C</span> Publicar el buscador (GitHub Pages — gratis)</h2>
+    <p class="lead">Queda una URL que el equipo abre desde el celu o la PC.</p>
+    <ol>
+      <li>Abrí <code>index.html</code> y en la línea <code>var SCRIPT_URL = "";</code> pegá adentro de las comillas la URL del paso A. Guardá.</li>
+      <li>En <a href="https://github.com" target="_blank">github.com</a> creá un repositorio nuevo (sugerido: <b>privado</b>, es un catálogo interno con precios).</li>
+      <li>Subí toda la carpeta: <code>index.html</code>, <code>productos.json</code>, la carpeta <code>fotos/</code>.</li>
+      <li>Andá a <b>Settings → Pages</b>. En "Branch" elegí <code>main</code> y carpeta <code>/root</code>. Guardá.</li>
+      <li>Esperá 1–2 min y vas a tener una URL tipo <code>https://nicolaskank-arch.github.io/buscador-precios-pewen/</code>. Esa es la que le pasás al equipo.</li>
+    </ol>
+    <div class="warn">Si el repo queda privado, GitHub Pages con repos privados requiere un plan pago o que el que lo abre tenga acceso al repo. Si preferís que sea gratis y público, tené en cuenta que cualquiera con el link va a poder ver los precios — decime cuál preferís y ajustamos.</div>
+  </div>
+
+  <p class="foot">Hecho para Pewen · para actualizar productos: <code>python build_catalogo.py "nueva lista.xlsx"</code> y volver a subir los archivos.</p>
+</main>
+</body>
+</html>
