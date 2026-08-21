@@ -185,7 +185,7 @@ function getPrincipales() {
   var hit = cache.get('fotos_principal_v1');
   if (hit) { try { return JSON.parse(hit); } catch (e) {} }
 
-  var sh = getSheet(CONFIG.TAB_PRINCIPAL, ['Codigo', 'Url', 'Fecha']);
+  var sh = getSheet(CONFIG.TAB_PRINCIPAL, ['Codigo', 'Url', 'Vendedor', 'Fecha']);
   var vals = sh.getDataRange().getValues();
   var map = {};
   for (var r = 1; r < vals.length; r++) {
@@ -213,7 +213,7 @@ function getPopulares() {
   var hit = cache.get('populares_v1');
   if (hit) { try { return JSON.parse(hit); } catch (e) {} }
 
-  var sh = getSheet(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Fecha']);
+  var sh = getSheet(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Vendedor', 'Fecha']);
   var vals = sh.getDataRange().getValues();
   var map = {};
   for (var r = 1; r < vals.length; r++) {
