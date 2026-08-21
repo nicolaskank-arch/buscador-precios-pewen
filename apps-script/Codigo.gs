@@ -1,17 +1,21 @@
 /**
  * BUSCADOR DE PRECIOS PEWEN — Web App (Google Apps Script)
  * ------------------------------------------------------------
- * Dos cosas:
+ * Tres cosas:
  *  1) Recibe fotos que el equipo sube o saca desde el buscador (celu o PC),
  *     las guarda en una carpeta de Drive y las anota en una planilla
  *     (CODIGO -> URL, puede haber varias por código). El buscador lee esa
  *     planilla al abrir (y cada tanto mientras sigue abierto) y arma la
  *     galería de cada producto — sin pasar por vos, aparecen al toque.
- *  2) Registra qué producto abre cada vendedor (con "Ver medidas y precios"),
- *     para poder ordenar por "más buscados" más adelante.
+ *  2) Deja marcar una foto como "principal" (la que se ve primero en la
+ *     card) y "ocultar" una foto que no sirve (subida por el equipo O la
+ *     original del catálogo, ej. una con marca de agua ajena) — las dos
+ *     cosas quedan anotadas acá, nunca se toca productos.json.
+ *  3) Registra qué producto abre cada vendedor (con "Ver medidas y precios"),
+ *     para poder ordenar por "más buscados".
  *
- * No hay moderación de fotos: lo que se sube se ve enseguida. Si alguna
- * queda mal, se borra la fila en la planilla o se pisa subiendo otra.
+ * No hay moderación: lo que se sube/oculta/marca se ve enseguida. Para
+ * deshacer algo, se borra la fila correspondiente en la planilla.
  * ------------------------------------------------------------
  */
 
@@ -23,18 +27,20 @@ var CONFIG = {
   // correr Ejecutar > verEnlaces.
   FOLDER_ID: '',
 
-  // Igual que arriba pero para la planilla índice CODIGO -> URL (y la de vistas).
+  // Igual que arriba pero para la planilla (todas las pestañas viven en una sola).
   SHEET_ID: '',
   TAB_FOTOS: 'Fotos Subidas',
   TAB_VISTAS: 'Vistas',
+  TAB_OCULTAS: 'Fotos Ocultas',
+  TAB_PRINCIPAL: 'Foto Principal',
 
-  // Bajo a propósito: el equipo va a estar subiendo fotos en tanda y no
-  // quiere ver la misma dos veces por llegar tarde el caché.
+  // Bajo a propósito: el equipo va a estar subiendo/editando fotos en tanda
+  // y no quiere ver algo desactualizado por llegar tarde el caché.
   CACHE_SECONDS_FOTOS: 20,
   CACHE_SECONDS_POPULARES: 300
 };
 
-// ====== SUBIR FOTO / REGISTRAR VISTA (desde el buscador) ======
+// ====== ACCIONES QUE ESCRIBEN (desde el buscador) ======
 function doPost(e) {
   var out;
   try {
@@ -42,6 +48,12 @@ function doPost(e) {
 
     if (body.accion === 'vista') {
       registrarVista(body.codigo, body.nombre || '');
+      out = { ok: true };
+    } else if (body.accion === 'ocultar_foto') {
+      ocultarFoto(body.codigo, body.url);
+      out = { ok: true };
+    } else if (body.accion === 'set_principal') {
+      setPrincipal(body.codigo, body.url);
       out = { ok: true };
     } else {
       var codigo = String(body.codigo || '').trim();
@@ -70,13 +82,23 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ====== LEER FOTOS SUBIDAS / POPULARES (el buscador las pide seguido) ======
+// ====== LECTURA (el buscador la pide seguido) ======
 function doGet(e) {
   var out;
   try {
-    if (e && e.parameter && e.parameter.fotos === '1') {
+    var p = (e && e.parameter) || {};
+    if (p.estado === '1') {
+      // un solo pedido con todo lo que necesita la app — menos idas y vueltas
+      out = {
+        ok: true,
+        fotos: getFotosSubidas(),
+        populares: getPopulares(),
+        ocultas: getOcultas(),
+        principales: getPrincipales()
+      };
+    } else if (p.fotos === '1') {
       out = { ok: true, fotos: getFotosSubidas() };
-    } else if (e && e.parameter && e.parameter.populares === '1') {
+    } else if (p.populares === '1') {
       out = { ok: true, populares: getPopulares() };
     } else {
       out = { ok: true, msg: 'Buscador de Precios Pewen — backend.' };
@@ -89,7 +111,7 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ====== FOTOS ======
+// ====== FOTOS SUBIDAS ======
 function anotarFoto(codigo, nombre, url, vendedor) {
   var sh = getSheet(CONFIG.TAB_FOTOS, ['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha']);
   sh.appendRow([codigo, nombre, url, vendedor, nowIso()]);
@@ -114,6 +136,65 @@ function getFotosSubidas() {
     map[codigo].push({ url: url, vendedor: String(vals[r][3] || ''), fecha: String(vals[r][4] || '') });
   }
   cache.put('fotos_subidas_v2', JSON.stringify(map), CONFIG.CACHE_SECONDS_FOTOS);
+  return map;
+}
+
+// ====== OCULTAR FOTO (subida O la original del catalogo — misma mecanica) ======
+function ocultarFoto(codigo, url) {
+  codigo = String(codigo || '').trim();
+  url = String(url || '').trim();
+  if (!codigo || !url) throw new Error('Falta código o url.');
+  var sh = getSheet(CONFIG.TAB_OCULTAS, ['Codigo', 'Url', 'Fecha']);
+  sh.appendRow([codigo, url, nowIso()]);
+  CacheService.getScriptCache().remove('fotos_ocultas_v1');
+}
+
+// Devuelve {codigo: [url, url, ...]} — las que hay que sacar de la galeria.
+function getOcultas() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('fotos_ocultas_v1');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+
+  var sh = getSheet(CONFIG.TAB_OCULTAS, ['Codigo', 'Url', 'Fecha']);
+  var vals = sh.getDataRange().getValues();
+  var map = {};
+  for (var r = 1; r < vals.length; r++) {
+    var codigo = String(vals[r][0] || '').trim();
+    var url = String(vals[r][1] || '').trim();
+    if (!codigo || !url) continue;
+    if (!map[codigo]) map[codigo] = [];
+    map[codigo].push(url);
+  }
+  cache.put('fotos_ocultas_v1', JSON.stringify(map), CONFIG.CACHE_SECONDS_FOTOS);
+  return map;
+}
+
+// ====== FOTO PRINCIPAL (cual se ve primero en la card) ======
+function setPrincipal(codigo, url) {
+  codigo = String(codigo || '').trim();
+  url = String(url || '').trim();
+  if (!codigo || !url) throw new Error('Falta código o url.');
+  var sh = getSheet(CONFIG.TAB_PRINCIPAL, ['Codigo', 'Url', 'Fecha']);
+  sh.appendRow([codigo, url, nowIso()]);
+  CacheService.getScriptCache().remove('fotos_principal_v1');
+}
+
+// Devuelve {codigo: url} — la ultima marcada gana.
+function getPrincipales() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('fotos_principal_v1');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+
+  var sh = getSheet(CONFIG.TAB_PRINCIPAL, ['Codigo', 'Url', 'Fecha']);
+  var vals = sh.getDataRange().getValues();
+  var map = {};
+  for (var r = 1; r < vals.length; r++) {
+    var codigo = String(vals[r][0] || '').trim();
+    var url = String(vals[r][1] || '').trim();
+    if (!codigo || !url) continue;
+    map[codigo] = url; // la ultima fila de cada codigo pisa a la anterior
+  }
+  cache.put('fotos_principal_v1', JSON.stringify(map), CONFIG.CACHE_SECONDS_FOTOS);
   return map;
 }
 

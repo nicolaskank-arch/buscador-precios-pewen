@@ -128,6 +128,11 @@
     color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer}
   .lightbox .prev{left:12px} .lightbox .next{right:12px}
   .lightbox .contador{color:rgba(255,255,255,.7);font-size:12.5px;margin-top:12px}
+  .lbAcciones{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+  .lbAcciones button{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:9px;
+    padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer}
+  .lbAcciones button:disabled{opacity:.5;cursor:default}
+  .lbAcciones button.lbBorrar{background:rgba(201,64,42,.85)}
 </style>
 </head>
 <body>
@@ -177,6 +182,10 @@
   <img id="lbImg" src="">
   <button class="nav next" id="lbNext">›</button>
   <div class="contador" id="lbContador"></div>
+  <div class="lbAcciones" id="lbAcciones">
+    <button id="lbPrincipal">⭐ Usar como principal</button>
+    <button id="lbEliminar" class="lbBorrar">🗑 Eliminar esta foto</button>
+  </div>
 </div>
 
 <script>
@@ -184,7 +193,7 @@
 // Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
 
-var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, dolar: null, fotosSubidas: {}, populares: {} };
+var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, dolar: null, fotosSubidas: {}, populares: {}, fotosOcultas: {}, fotosPrincipales: {} };
 
 function fmtMoney(v, moneda){
   if(v==null) return '—';
@@ -225,28 +234,31 @@ function toast(msg){
   toast._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
 }
 
-function cargarFotosSubidas(){
+function cargarEstadoFotos(){
   if(!SCRIPT_URL) return;
-  var cache = localStorage.getItem('bp_fotos_subidas');
-  if(cache && !Object.keys(state.fotosSubidas).length){ try{ state.fotosSubidas = JSON.parse(cache); }catch(e){} }
-  fetch(SCRIPT_URL + '?fotos=1')
+  var cache = localStorage.getItem('bp_estado_fotos');
+  if(cache && !Object.keys(state.fotosSubidas).length){
+    try{
+      var c = JSON.parse(cache);
+      state.fotosSubidas = c.fotos || {};
+      state.fotosOcultas = c.ocultas || {};
+      state.fotosPrincipales = c.principales || {};
+      state.populares = c.populares || {};
+    }catch(e){}
+  }
+  fetch(SCRIPT_URL + '?estado=1')
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d || !d.ok) return;
-      var nuevo = JSON.stringify(d.fotos || {});
-      if(nuevo === JSON.stringify(state.fotosSubidas)) return;  // nada cambió, no re-renderizamos
+      var nuevo = JSON.stringify({fotos:d.fotos||{}, ocultas:d.ocultas||{}, principales:d.principales||{}});
+      var anterior = JSON.stringify({fotos:state.fotosSubidas, ocultas:state.fotosOcultas, principales:state.fotosPrincipales});
       state.fotosSubidas = d.fotos || {};
-      localStorage.setItem('bp_fotos_subidas', nuevo);
-      renderGrid();
+      state.fotosOcultas = d.ocultas || {};
+      state.fotosPrincipales = d.principales || {};
+      state.populares = d.populares || {};
+      localStorage.setItem('bp_estado_fotos', JSON.stringify({fotos:state.fotosSubidas, ocultas:state.fotosOcultas, principales:state.fotosPrincipales, populares:state.populares}));
+      if(nuevo !== anterior) renderGrid();  // solo re-renderiza si algo de las fotos cambió de verdad
     })
-    .catch(function(){});
-}
-
-function cargarPopulares(){
-  if(!SCRIPT_URL) return;
-  fetch(SCRIPT_URL + '?populares=1')
-    .then(function(r){ return r.json(); })
-    .then(function(d){ if(d && d.ok) state.populares = d.populares || {}; })
     .catch(function(){});
 }
 
@@ -260,17 +272,24 @@ function registrarVista(p){
 }
 
 // Todas las fotos de un producto: las que subió el equipo (más nueva primero)
-// + la original del catálogo si no está repetida.
+// + la original del catálogo si no está repetida — sacando las ocultas y
+// poniendo primero la marcada como principal, si hay.
 function todasLasFotos(p){
   var subidas = (state.fotosSubidas[p.id] || []).map(function(f){ return f.url; }).reverse();
   if(p.foto_url && subidas.indexOf(p.foto_url) < 0) subidas.push(p.foto_url);
-  return subidas;
+  var ocultas = state.fotosOcultas[p.id] || [];
+  var visibles = subidas.filter(function(u){ return ocultas.indexOf(u) < 0; });
+  var principal = state.fotosPrincipales[p.id];
+  if(principal && visibles.indexOf(principal) > 0){
+    visibles = [principal].concat(visibles.filter(function(u){ return u !== principal; }));
+  }
+  return visibles;
 }
 
-var lbFotos = [], lbIndex = 0;
-function abrirLightbox(fotos, i){
+var lbFotos = [], lbIndex = 0, lbProducto = null;
+function abrirLightbox(fotos, i, producto){
   if(!fotos.length) return;
-  lbFotos = fotos; lbIndex = i;
+  lbFotos = fotos; lbIndex = i; lbProducto = producto || null;
   pintarLightbox();
   document.getElementById('lightbox').classList.add('on');
 }
@@ -280,6 +299,12 @@ function pintarLightbox(){
   var multi = lbFotos.length > 1;
   document.getElementById('lbPrev').style.display = multi ? '' : 'none';
   document.getElementById('lbNext').style.display = multi ? '' : 'none';
+  var esPrincipal = lbProducto && state.fotosPrincipales[lbProducto.id] === lbFotos[lbIndex];
+  var puedeEditar = !!(lbProducto && SCRIPT_URL);
+  document.getElementById('lbAcciones').style.display = puedeEditar ? '' : 'none';
+  var btnPpal = document.getElementById('lbPrincipal');
+  btnPpal.textContent = esPrincipal ? '⭐ Ya es la principal' : '⭐ Usar como principal';
+  btnPpal.disabled = esPrincipal;
 }
 document.getElementById('lbCerrar').addEventListener('click', function(){ document.getElementById('lightbox').classList.remove('on'); });
 document.getElementById('lightbox').addEventListener('click', function(e){ if(e.target.id==='lightbox') this.classList.remove('on'); });
@@ -290,6 +315,41 @@ document.addEventListener('keydown', function(e){
   if(e.key==='Escape') document.getElementById('lightbox').classList.remove('on');
   if(e.key==='ArrowLeft') document.getElementById('lbPrev').click();
   if(e.key==='ArrowRight') document.getElementById('lbNext').click();
+});
+document.getElementById('lbPrincipal').addEventListener('click', function(){
+  if(!lbProducto) return;
+  var url = lbFotos[lbIndex];
+  state.fotosPrincipales[lbProducto.id] = url;  // optimista
+  pintarLightbox();
+  toast('Marcada como principal.');
+  fetch(SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ accion: 'set_principal', codigo: lbProducto.id, url: url })
+  }).catch(function(){});
+});
+document.getElementById('lbEliminar').addEventListener('click', function(){
+  if(!lbProducto) return;
+  if(!confirm('¿Eliminar esta foto? No se puede deshacer desde acá.')) return;
+  var url = lbFotos[lbIndex];
+  var pid = lbProducto.id;
+  if(!state.fotosOcultas[pid]) state.fotosOcultas[pid] = [];
+  state.fotosOcultas[pid].push(url);  // optimista
+  fetch(SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ accion: 'ocultar_foto', codigo: pid, url: url })
+  }).catch(function(){});
+  var restantes = todasLasFotos(lbProducto);
+  toast('Foto eliminada.');
+  if(!restantes.length){
+    document.getElementById('lightbox').classList.remove('on');
+  } else {
+    lbFotos = restantes;
+    lbIndex = Math.min(lbIndex, restantes.length - 1);
+    pintarLightbox();
+  }
+  renderGrid();
 });
 
 // Achica la foto en el navegador antes de mandarla (una foto de celu pesa
@@ -345,7 +405,7 @@ function subirFoto(p, file){
   }).then(function(){
     toast('¡Foto subida! Ya la ven todos.');
     // no-cors no deja leer la respuesta: refrescamos el índice para confirmar.
-    setTimeout(cargarFotosSubidas, 1500);
+    setTimeout(cargarEstadoFotos, 1500);
   }).catch(function(){
     toast('No se pudo subir. Revisá la conexión e intentá de nuevo.');
   });
@@ -518,7 +578,7 @@ function renderGrid(){
     img.addEventListener('click', function(){
       var id = img.getAttribute('data-lightbox');
       var p = lista.find(function(x){ return x.id===id; });
-      abrirLightbox(todasLasFotos(p), 0);
+      abrirLightbox(todasLasFotos(p), 0, p);
     });
   });
   document.querySelectorAll('.pagobtn').forEach(function(btn){
@@ -595,12 +655,10 @@ fetch('productos.json')
   });
 
 cargarDolar();
-cargarFotosSubidas();
-cargarPopulares();
-// mientras el equipo está subiendo fotos en tanda, conviene ver rápido lo que
-// subieron los demás para no volver a fotografiar lo mismo.
-setInterval(cargarFotosSubidas, 20000);
-setInterval(cargarPopulares, 120000);
+cargarEstadoFotos();
+// mientras el equipo está subiendo/editando fotos en tanda, conviene ver
+// rápido lo que hicieron los demás para no duplicar trabajo.
+setInterval(cargarEstadoFotos, 20000);
 </script>
 </body>
 </html>
