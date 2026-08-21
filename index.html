@@ -7,31 +7,34 @@
 <meta name="description" content="Buscador interno de precios por tipo de piso, material y detalle — Pewen">
 <style>
   :root{
-    --negro:#131110; --negro2:#241f1a; --oro:#f6b446; --oro2:#fbb748; --oro-dark:#b7791a;
-    --bg:#f4f1ec; --card:#ffffff; --txt:#211f1b; --muted:#7a746a;
-    --linea:#e8e3da; --sombra:0 2px 12px rgba(20,15,10,.07);
+    /* Paleta oficial Pewen (Manual de Imagen): Amarillo Pewen como color fuerte,
+       sobre blanco/crema — "diseño elegante, cálido, claro y limpio" (a
+       propósito bien distinto del negro de Stock Pewen, para no confundirlas). */
+    --negro:#211f1b; --negro2:#241f1a; --oro:#fabb2f; --oro2:#ffcf5c; --oro-dark:#b9790a;
+    --bg:#fffdf9; --header:#ffffff; --card:#ffffff; --txt:#211f1b; --muted:#847c6c;
+    --linea:#f0e4cc; --crema:#f2e6da; --sombra:0 2px 14px rgba(184,140,20,.10);
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--txt);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  header{position:sticky;top:0;z-index:20;background:var(--negro);color:#fff;
-    padding:10px 14px calc(10px + env(safe-area-inset-bottom,0));box-shadow:0 2px 14px rgba(0,0,0,.25);
+  header{position:sticky;top:0;z-index:20;background:var(--header);color:var(--txt);
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom,0));box-shadow:0 2px 14px rgba(184,140,20,.12);
     border-bottom:3px solid var(--oro)}
   .top{display:flex;align-items:center;gap:11px}
   .brand{flex:1;line-height:1}
-  .brand .t1{font-size:18px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
-  .brand .t1 b{color:var(--oro);font-weight:800}
-  .brand .t2{font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:rgba(255,255,255,.55);
+  .brand .t1{font-size:18px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--negro)}
+  .brand .t1 b{color:var(--oro-dark);font-weight:800}
+  .brand .t2{font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);
     margin-top:2px;white-space:nowrap}
   .rightbox{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:0 0 auto}
-  .dolar{font-size:11px;color:rgba(255,255,255,.7);white-space:nowrap}
-  .dolar b{color:var(--oro)}
-  .sesion{font-size:10.5px;color:rgba(255,255,255,.5);white-space:nowrap;position:relative}
-  .sesion a{color:rgba(255,255,255,.5)}
+  .dolar{font-size:11px;color:var(--muted);white-space:nowrap}
+  .dolar b{color:var(--oro-dark)}
+  .sesion{font-size:10.5px;color:var(--muted);white-space:nowrap;position:relative}
+  .sesion a{color:var(--muted)}
   #rankingBtn{text-decoration:none;font-size:12px}
   .rankingPop{display:none;position:absolute;top:22px;right:0;background:var(--card);color:var(--txt);
-    border-radius:11px;padding:12px 14px;width:200px;box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:30;
-    text-align:left;white-space:normal}
+    border-radius:11px;padding:12px 14px;width:200px;box-shadow:0 8px 30px rgba(80,60,10,.22);z-index:30;
+    text-align:left;white-space:normal;border:1px solid var(--linea)}
   .rankingPop.on{display:block}
   .rankingPop .rTitulo{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;
     letter-spacing:.3px;margin-bottom:8px}
@@ -39,35 +42,35 @@
   .rankingPop .rLinea b{color:var(--oro-dark)}
   .rankingPop .rVacio{font-size:12px;color:var(--muted)}
   .controls{max-width:1240px;margin:0 auto;padding:10px 0 4px}
-  .login{position:fixed;inset:0;background:var(--negro);z-index:100;display:flex;
-    align-items:center;justify-content:center;padding:20px}
+  .login{position:fixed;inset:0;background:linear-gradient(160deg,var(--oro) 0%,var(--oro-dark) 100%);z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:20px}
   .loginCard{background:var(--card);border-radius:16px;padding:28px 24px;max-width:340px;width:100%;
-    box-shadow:0 8px 40px rgba(0,0,0,.4)}
+    box-shadow:0 12px 50px rgba(60,40,0,.35)}
   .loginLogo{font-size:19px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
-    color:var(--txt);margin-bottom:4px}
+    color:var(--negro);margin-bottom:4px}
   .loginLogo b{color:var(--oro-dark)}
   .loginCard p{color:var(--muted);font-size:13px;margin:0 0 16px}
   .loginCard select,.loginCard input{width:100%;box-sizing:border-box;border:1px solid var(--linea);
-    background:var(--bg);color:var(--txt);border-radius:9px;padding:12px;font-size:15px;margin-bottom:10px}
+    background:var(--crema);color:var(--txt);border-radius:9px;padding:12px;font-size:15px;margin-bottom:10px}
   .loginCard button{width:100%;border:0;background:var(--negro);color:var(--oro);padding:13px;
     border-radius:9px;font-size:14px;font-weight:800;cursor:pointer}
   .loginCard button:active{transform:scale(.98)}
   .loginError{color:#c9422a;font-size:12.5px;margin-top:10px;min-height:16px}
   .row{display:flex;gap:8px;margin-top:10px}
   .buscawrap{flex:1;min-width:0;position:relative;display:flex}
-  .row input{flex:1;min-width:0;width:100%;border:1px solid rgba(255,255,255,.22);
-    background:rgba(255,255,255,.10);color:#fff;border-radius:10px;padding:12px 34px 12px 12px;
+  .row input{flex:1;min-width:0;width:100%;border:1.5px solid var(--linea);
+    background:var(--crema);color:var(--txt);border-radius:10px;padding:12px 34px 12px 12px;
     font-size:16px}
-  .row input::placeholder{color:rgba(255,255,255,.6)}
-  .row input:focus{outline:none;border-color:var(--oro);background:rgba(255,255,255,.16)}
-  .limpiar{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);
-    border:0;color:#fff;width:30px;height:30px;border-radius:50%;font-size:17px;line-height:1;
+  .row input::placeholder{color:var(--muted)}
+  .row input:focus{outline:none;border-color:var(--oro-dark);background:#fff}
+  .limpiar{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--linea);
+    border:0;color:var(--txt);width:30px;height:30px;border-radius:50%;font-size:17px;line-height:1;
     cursor:pointer;display:none}
   .limpiar.on{display:block}
   .chips{display:flex;gap:7px;overflow-x:auto;padding:11px 0 2px;-webkit-overflow-scrolling:touch}
-  .chip{white-space:nowrap;border:0;border-radius:999px;padding:11px 15px;font-size:13.5px;font-weight:600;
-    background:rgba(255,255,255,.12);color:#fff;cursor:pointer;min-height:42px}
-  .chip.active{background:var(--oro);color:var(--negro);font-weight:800}
+  .chip{white-space:nowrap;border:1.5px solid var(--linea);border-radius:999px;padding:10px 15px;font-size:13.5px;font-weight:700;
+    background:var(--crema);color:var(--negro);cursor:pointer;min-height:42px}
+  .chip.active{background:var(--oro);color:var(--negro);font-weight:800;border-color:var(--oro-dark)}
   @media (min-width:900px) and (hover:hover) and (pointer:fine){
     header{padding:0 14px}
     .controls{padding:7px 0 3px}
@@ -86,7 +89,7 @@
   @media(min-width:1100px){.grid{grid-template-columns:1fr 1fr 1fr}}
   .card{background:var(--card);border:1px solid var(--linea);border-radius:14px;overflow:hidden;
     box-shadow:var(--sombra);display:flex;flex-direction:column}
-  .ph{position:relative;background:#efeae1;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .ph{position:relative;background:var(--crema);aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .ph img{width:100%;height:100%;object-fit:cover;display:block}
   .ph .noimg{color:#b7ae9e;font-size:13px;text-align:center;padding:0 10px}
   .catlabel{position:absolute;top:8px;left:8px;background:var(--oro);color:var(--negro);
@@ -135,12 +138,12 @@
   .fotomas{position:absolute;right:7px;top:7px;background:rgba(19,17,16,.78);color:#fff;
     font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:6px}
   .orden{position:relative;display:flex}
-  select#orden{flex:0 0 auto;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);
-    color:#fff;border-radius:10px;padding:12px 30px 12px 12px;font-size:15px;appearance:none;
+  select#orden{flex:0 0 auto;border:1.5px solid var(--linea);background:var(--crema);
+    color:var(--txt);border-radius:10px;padding:12px 30px 12px 12px;font-size:15px;appearance:none;
     -webkit-appearance:none;cursor:pointer}
-  select#orden:focus{outline:none;border-color:var(--oro)}
+  select#orden:focus{outline:none;border-color:var(--oro-dark)}
   .orden::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);
-    color:rgba(255,255,255,.7);pointer-events:none;font-size:11px}
+    color:var(--muted);pointer-events:none;font-size:11px}
   @media (min-width:900px) and (hover:hover) and (pointer:fine){
     select#orden{padding:8px 26px 8px 11px;font-size:13.5px;border-radius:9px}
   }
