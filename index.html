@@ -96,6 +96,9 @@
     font-size:10.5px;font-weight:800;letter-spacing:.4px;padding:4px 8px;border-radius:6px;text-transform:uppercase}
   .body{padding:11px 12px 12px}
   .nombre{font-size:15.5px;font-weight:800;line-height:1.25;margin:0 0 3px}
+  .sku{font-size:12.5px;font-weight:800;color:var(--oro-dark);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    letter-spacing:.3px;margin:1px 0 3px}
+  .sku .skuMas{font-weight:600;color:var(--muted);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   .sub{font-size:12px;color:var(--muted);margin-bottom:9px}
   .precio-row{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-bottom:9px}
   .precio{font-size:19px;font-weight:800;color:var(--oro-dark)}
@@ -520,10 +523,14 @@ function cardHtml(p){
     return '<button class="pagobtn' + (i===0?' active':'') + '" data-pago="' + k + '">' + label + '</button>';
   }).join('');
 
+  var skuHtml = '<div class="sku">SKU ' + p.variantes[0].codigo +
+    (p.variantes.length>1 ? ' <span class="skuMas">+' + (p.variantes.length-1) + ' más</span>' : '') + '</div>';
+
   return '<div class="card" data-id="' + p.id + '">' +
     '<div class="ph"><span class="catlabel">' + p.grupo + '</span>' + fotoHtml + '</div>' +
     '<div class="body">' +
       '<div class="nombre">' + p.nombre_base + '</div>' +
+      skuHtml +
       '<div class="sub">' + (p.linea ? p.linea + ' — ' : '') + p.rubro + '</div>' +
       '<div class="precio-row">' + precioHtml + arsHtml + '</div>' +
       '<div class="pills">' + pills + '</div>' +
