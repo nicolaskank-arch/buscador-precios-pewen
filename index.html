@@ -691,9 +691,12 @@ function renderGrid(){
 
 var pendienteFoto = null;
 document.getElementById('fotoInput').addEventListener('change', function(e){
-  var files = e.target.files;
+  // ojo: hay que sacar copia de los archivos ANTES de limpiar el input, porque
+  // en varios navegadores e.target.files es una referencia viva que se vacía
+  // sola apenas se pisa e.target.value (si no, subirFoto() recibía 0 archivos).
+  var lista = Array.prototype.slice.call(e.target.files || []);
   e.target.value = '';
-  if(files && files.length && pendienteFoto) subirFoto(pendienteFoto, files);
+  if(lista.length && pendienteFoto) subirFoto(pendienteFoto, lista);
 });
 
 document.getElementById('buscar').addEventListener('input', function(e){
