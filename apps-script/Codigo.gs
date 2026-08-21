@@ -47,13 +47,13 @@ function doPost(e) {
     var body = JSON.parse(e.postData.contents);
 
     if (body.accion === 'vista') {
-      registrarVista(body.codigo, body.nombre || '');
+      registrarVista(body.codigo, body.nombre || '', body.vendedor || '');
       out = { ok: true };
     } else if (body.accion === 'ocultar_foto') {
-      ocultarFoto(body.codigo, body.url);
+      ocultarFoto(body.codigo, body.url, body.vendedor || '');
       out = { ok: true };
     } else if (body.accion === 'set_principal') {
-      setPrincipal(body.codigo, body.url);
+      setPrincipal(body.codigo, body.url, body.vendedor || '');
       out = { ok: true };
     } else {
       var codigo = String(body.codigo || '').trim();
@@ -140,12 +140,12 @@ function getFotosSubidas() {
 }
 
 // ====== OCULTAR FOTO (subida O la original del catalogo — misma mecanica) ======
-function ocultarFoto(codigo, url) {
+function ocultarFoto(codigo, url, vendedor) {
   codigo = String(codigo || '').trim();
   url = String(url || '').trim();
   if (!codigo || !url) throw new Error('Falta código o url.');
-  var sh = getSheet(CONFIG.TAB_OCULTAS, ['Codigo', 'Url', 'Fecha']);
-  sh.appendRow([codigo, url, nowIso()]);
+  var sh = getSheet(CONFIG.TAB_OCULTAS, ['Codigo', 'Url', 'Vendedor', 'Fecha']);
+  sh.appendRow([codigo, url, vendedor || '', nowIso()]);
   CacheService.getScriptCache().remove('fotos_ocultas_v1');
 }
 
@@ -155,7 +155,7 @@ function getOcultas() {
   var hit = cache.get('fotos_ocultas_v1');
   if (hit) { try { return JSON.parse(hit); } catch (e) {} }
 
-  var sh = getSheet(CONFIG.TAB_OCULTAS, ['Codigo', 'Url', 'Fecha']);
+  var sh = getSheet(CONFIG.TAB_OCULTAS, ['Codigo', 'Url', 'Vendedor', 'Fecha']);
   var vals = sh.getDataRange().getValues();
   var map = {};
   for (var r = 1; r < vals.length; r++) {
@@ -170,12 +170,12 @@ function getOcultas() {
 }
 
 // ====== FOTO PRINCIPAL (cual se ve primero en la card) ======
-function setPrincipal(codigo, url) {
+function setPrincipal(codigo, url, vendedor) {
   codigo = String(codigo || '').trim();
   url = String(url || '').trim();
   if (!codigo || !url) throw new Error('Falta código o url.');
-  var sh = getSheet(CONFIG.TAB_PRINCIPAL, ['Codigo', 'Url', 'Fecha']);
-  sh.appendRow([codigo, url, nowIso()]);
+  var sh = getSheet(CONFIG.TAB_PRINCIPAL, ['Codigo', 'Url', 'Vendedor', 'Fecha']);
+  sh.appendRow([codigo, url, vendedor || '', nowIso()]);
   CacheService.getScriptCache().remove('fotos_principal_v1');
 }
 
@@ -198,12 +198,12 @@ function getPrincipales() {
   return map;
 }
 
-// ====== VISTAS (para "más buscados") ======
-function registrarVista(codigo, nombre) {
+// ====== VISTAS (para "más buscados" y para saber quién trabajó qué) ======
+function registrarVista(codigo, nombre, vendedor) {
   codigo = String(codigo || '').trim();
   if (!codigo) return;
-  var sh = getSheet(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Fecha']);
-  sh.appendRow([codigo, nombre, nowIso()]);
+  var sh = getSheet(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Vendedor', 'Fecha']);
+  sh.appendRow([codigo, nombre, vendedor || '', nowIso()]);
 }
 
 // Devuelve {codigo: cantidad_de_vistas}. Cache más largo: no hace falta que

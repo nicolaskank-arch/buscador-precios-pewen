@@ -26,7 +26,23 @@
   .rightbox{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:0 0 auto}
   .dolar{font-size:11px;color:rgba(255,255,255,.7);white-space:nowrap}
   .dolar b{color:var(--oro)}
+  .sesion{font-size:10.5px;color:rgba(255,255,255,.5);white-space:nowrap}
+  .sesion a{color:rgba(255,255,255,.5)}
   .controls{max-width:1240px;margin:0 auto;padding:10px 0 4px}
+  .login{position:fixed;inset:0;background:var(--negro);z-index:100;display:flex;
+    align-items:center;justify-content:center;padding:20px}
+  .loginCard{background:var(--card);border-radius:16px;padding:28px 24px;max-width:340px;width:100%;
+    box-shadow:0 8px 40px rgba(0,0,0,.4)}
+  .loginLogo{font-size:19px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--txt);margin-bottom:4px}
+  .loginLogo b{color:var(--oro-dark)}
+  .loginCard p{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .loginCard select,.loginCard input{width:100%;box-sizing:border-box;border:1px solid var(--linea);
+    background:var(--bg);color:var(--txt);border-radius:9px;padding:12px;font-size:15px;margin-bottom:10px}
+  .loginCard button{width:100%;border:0;background:var(--negro);color:var(--oro);padding:13px;
+    border-radius:9px;font-size:14px;font-weight:800;cursor:pointer}
+  .loginCard button:active{transform:scale(.98)}
+  .loginError{color:#c9422a;font-size:12.5px;margin-top:10px;min-height:16px}
   .row{display:flex;gap:8px;margin-top:10px}
   .buscawrap{flex:1;min-width:0;position:relative;display:flex}
   .row input{flex:1;min-width:0;width:100%;border:1px solid rgba(255,255,255,.22);
@@ -136,6 +152,19 @@
 </style>
 </head>
 <body>
+<div class="login" id="login">
+  <div class="loginCard">
+    <div class="loginLogo"><b>PEWEN</b> PRECIOS</div>
+    <p>Buscador interno — elegí tu usuario para entrar.</p>
+    <select id="loginUsuario">
+      <option value="">Elegí tu usuario…</option>
+    </select>
+    <input type="password" id="loginClave" placeholder="Clave" autocomplete="current-password">
+    <button id="loginEntrar">Entrar</button>
+    <div class="loginError" id="loginError"></div>
+  </div>
+</div>
+<div id="app" style="display:none">
 <header>
   <div class="top">
     <div class="brand">
@@ -144,6 +173,7 @@
     </div>
     <div class="rightbox">
       <div class="dolar" id="dolar">cotización…</div>
+      <div class="sesion"><span id="sesionUsuario"></span> · <a href="#" id="cerrarSesion">cerrar sesión</a></div>
     </div>
   </div>
   <div class="controls">
@@ -186,6 +216,7 @@
     <button id="lbPrincipal">⭐ Usar como principal</button>
     <button id="lbEliminar" class="lbBorrar">🗑 Eliminar esta foto</button>
   </div>
+</div>
 </div>
 
 <script>
@@ -267,7 +298,7 @@ function registrarVista(p){
   fetch(SCRIPT_URL, {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ accion: 'vista', codigo: p.id, nombre: p.nombre_base })
+    body: JSON.stringify({ accion: 'vista', codigo: p.id, nombre: p.nombre_base, vendedor: localStorage.getItem('bp_vendedor') || '' })
   }).catch(function(){});
 }
 
@@ -325,7 +356,7 @@ document.getElementById('lbPrincipal').addEventListener('click', function(){
   fetch(SCRIPT_URL, {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ accion: 'set_principal', codigo: lbProducto.id, url: url })
+    body: JSON.stringify({ accion: 'set_principal', codigo: lbProducto.id, url: url, vendedor: localStorage.getItem('bp_vendedor') || '' })
   }).catch(function(){});
 });
 document.getElementById('lbEliminar').addEventListener('click', function(){
@@ -338,7 +369,7 @@ document.getElementById('lbEliminar').addEventListener('click', function(){
   fetch(SCRIPT_URL, {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ accion: 'ocultar_foto', codigo: pid, url: url })
+    body: JSON.stringify({ accion: 'ocultar_foto', codigo: pid, url: url, vendedor: localStorage.getItem('bp_vendedor') || '' })
   }).catch(function(){});
   var restantes = todasLasFotos(lbProducto);
   toast('Foto eliminada.');
@@ -642,23 +673,102 @@ document.getElementById('soloSinFoto').addEventListener('click', function(){
   renderGrid();
 });
 
-fetch('productos.json')
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    state.productos = d.productos;
-    state.tierLabels = d.tier_labels;
-    renderChips();
-    renderGrid();
-  })
-  .catch(function(err){
-    document.getElementById('grid').innerHTML = '<div class="vacio">No pude cargar productos.json — ¿lo generaste con build_catalogo.py?</div>';
-  });
+function iniciarApp(){
+  fetch('productos.json')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      state.productos = d.productos;
+      state.tierLabels = d.tier_labels;
+      renderChips();
+      renderGrid();
+    })
+    .catch(function(err){
+      document.getElementById('grid').innerHTML = '<div class="vacio">No pude cargar productos.json — ¿lo generaste con build_catalogo.py?</div>';
+    });
 
-cargarDolar();
-cargarEstadoFotos();
-// mientras el equipo está subiendo/editando fotos en tanda, conviene ver
-// rápido lo que hicieron los demás para no duplicar trabajo.
-setInterval(cargarEstadoFotos, 20000);
+  cargarDolar();
+  cargarEstadoFotos();
+  // mientras el equipo está subiendo/editando fotos en tanda, conviene ver
+  // rápido lo que hicieron los demás para no duplicar trabajo.
+  setInterval(cargarEstadoFotos, 20000);
+}
+
+// ====== LOGIN (clave compartida simple — no es seguridad real, solo evita
+// que alguien entre "de casualidad"; el catálogo sigue siendo un archivo
+// público en internet para quien sepa buscarlo). Queda guardado en este
+// dispositivo, no vuelve a pedir clave salvo "cerrar sesión". ======
+// usuario = lo que elige del desplegable (corto, para loguearse rápido).
+// nombre = lo que se guarda como autor en la planilla (nombre completo).
+// clave = hash de "usuario+2541" (cada uno tiene la suya, no es una clave compartida).
+var USUARIOS = [
+  {usuario:'apen',   nombre:'Apendino Joaquin',  clave:'82e346389a8f8ae36fbf7ba8fbc864d660a6a54bbc8ae2c7226e5012b4a819ad'},
+  {usuario:'vivi',   nombre:'Viviana Gonzalez',  clave:'0127c90090876f47b2897b2dc918aacf0b32fd37e5e5a3a8bb23a14b2ac1b6ae'},
+  {usuario:'tana',   nombre:'Yanina Duran',      clave:'19e5bdb5e008b4bea637c0f8cb164382d10261803ebb9d1104ffd0a6a4139dcf'},
+  {usuario:'juli',   nombre:'Julian Martene',    clave:'9890095abcc9e9dd180e880a580ea7ff8ae348369171edadc135f1e18d10ae44'},
+  {usuario:'ger',    nombre:'German Gamon',      clave:'84314fe7756062b0fb1b2854ec502d6dfd41fb1485d60c874fc9a85adb93d137'},
+  {usuario:'mai',    nombre:'Maia Indij',        clave:'b17f3948dee17606160e4f7c536854bc18b20b3adb73632adf5e2477250734db'},
+  {usuario:'joaco',  nombre:'Joaquin Cabrera',   clave:'b06d8297655bd7904f83b1e9959cb36206ac11a8b3e540dbbd267d354a95874e'},
+  {usuario:'ana',    nombre:'Analia Nordemann',  clave:'92552bba059a8bb3cccf95a449a245847263482409edd7bbd824474f98ea817c'},
+  {usuario:'mari',   nombre:'Maria Escudero',    clave:'e1cb1f90bc4db66e720ae991fcb00ea5fc57d1b9f0a678002f666be3ea0c6c96'},
+  {usuario:'alvaro', nombre:'Alvaro Baldez',     clave:'1cf694b7f4066108cd021379642f91d5c79ef113a6aa024c106aa456931b09b6'},
+  {usuario:'andrea', nombre:'Andrea',            clave:'575a26a5fdb1ad0b43b50b00d96e5bfc987700af767217fa44a8c444e5e128a8'},
+  {usuario:'nico',   nombre:'Nicolas Kank',      clave:'f9820d8a55045701f145dadd792412d1c23c8fd881db77dd1774fb28f5e91f00'}
+];
+
+function sha256Hex(texto){
+  var buf = new TextEncoder().encode(texto);
+  return crypto.subtle.digest('SHA-256', buf).then(function(hashBuf){
+    return Array.from(new Uint8Array(hashBuf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  });
+}
+
+(function(){
+  var sel = document.getElementById('loginUsuario');
+  USUARIOS.forEach(function(u){
+    var opt = document.createElement('option');
+    opt.value = u.usuario; opt.textContent = u.nombre;
+    sel.appendChild(opt);
+  });
+})();
+
+function mostrarApp(usuario){
+  var u = USUARIOS.find(function(x){ return x.usuario === usuario; });
+  var nombre = u ? u.nombre : usuario;
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  document.getElementById('sesionUsuario').textContent = nombre;
+  localStorage.setItem('bp_vendedor', nombre);
+  iniciarApp();
+}
+
+document.getElementById('loginEntrar').addEventListener('click', function(){
+  var usuario = document.getElementById('loginUsuario').value;
+  var clave = document.getElementById('loginClave').value;
+  var err = document.getElementById('loginError');
+  var u = USUARIOS.find(function(x){ return x.usuario === usuario; });
+  if(!u){ err.textContent = 'Elegí tu usuario.'; return; }
+  sha256Hex(clave).then(function(hash){
+    if(hash === u.clave){
+      localStorage.setItem('bp_usuario', usuario);
+      mostrarApp(usuario);
+    } else {
+      err.textContent = 'Clave incorrecta.';
+    }
+  });
+});
+document.getElementById('loginClave').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') document.getElementById('loginEntrar').click();
+});
+document.getElementById('cerrarSesion').addEventListener('click', function(e){
+  e.preventDefault();
+  localStorage.removeItem('bp_usuario');
+  location.reload();
+});
+
+var usuarioGuardado = localStorage.getItem('bp_usuario');
+if(usuarioGuardado && USUARIOS.some(function(x){ return x.usuario === usuarioGuardado; })){
+  mostrarApp(usuarioGuardado);
+}
 </script>
 </body>
 </html>
