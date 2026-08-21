@@ -230,22 +230,30 @@ function getPopulares() {
 // Devuelve {fotos: {vendedor: cantidad}, vistas: {vendedor: cantidad}}.
 function getRanking() {
   var cache = CacheService.getScriptCache();
-  var hit = cache.get('ranking_v1');
+  var hit = cache.get('ranking_v2');
   if (hit) { try { return JSON.parse(hit); } catch (e) {} }
 
-  var out = { fotos: contarPorVendedor(CONFIG.TAB_FOTOS), vistas: contarPorVendedor(CONFIG.TAB_VISTAS) };
-  cache.put('ranking_v1', JSON.stringify(out), CONFIG.CACHE_SECONDS_POPULARES);
+  // "Fotos Subidas" tiene una columna Url de mas antes de Vendedor (indice 3);
+  // "Vistas" no la tiene (Vendedor va en el indice 2) — ojo si se agrega otra columna.
+  var out = {
+    fotos: contarPorVendedor(CONFIG.TAB_FOTOS, ['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha'], 3),
+    vistas: contarPorVendedor(CONFIG.TAB_VISTAS, ['Codigo', 'Nombre', 'Vendedor', 'Fecha'], 2)
+  };
+  cache.put('ranking_v2', JSON.stringify(out), CONFIG.CACHE_SECONDS_POPULARES);
   return out;
 }
 
-// Las dos pestañas (Fotos Subidas, Vistas) tienen "Vendedor" en la columna C (índice 2).
-function contarPorVendedor(tabName) {
-  var sh = getSheet(tabName, ['Codigo', 'Nombre', 'Vendedor', 'Fecha']);
+// Cuenta cuantas filas tiene cada vendedor. Salta filas viejas, de antes de
+// que existiera la columna Vendedor, que en ese indice tienen otra cosa
+// (una fecha con pinta de ISO 2026-01-01T...) en vez de un nombre.
+var FECHA_ISO_RE = /^\d{4}-\d{2}-\d{2}T/;
+function contarPorVendedor(tabName, encabezado, colVendedor) {
+  var sh = getSheet(tabName, encabezado);
   var vals = sh.getDataRange().getValues();
   var map = {};
   for (var r = 1; r < vals.length; r++) {
-    var vendedor = String(vals[r][2] || '').trim();
-    if (!vendedor) continue;
+    var vendedor = String(vals[r][colVendedor] || '').trim();
+    if (!vendedor || FECHA_ISO_RE.test(vendedor)) continue;
     map[vendedor] = (map[vendedor] || 0) + 1;
   }
   return map;
