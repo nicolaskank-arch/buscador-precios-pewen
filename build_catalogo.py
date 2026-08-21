@@ -44,7 +44,7 @@ PAGO_COLS = {
 EXCLUDE_RUBROS = {
     "Zocalos MDF", "Zocalos Vinilico", "Terminaciones", "ACCESORIOS Reve Pared",
     "ACCESORIOS DECK", "Weber", "adhesivos", "Lacas y Adhesivos", "Mantos",
-    "Perfiles WPC", "Muebles Jardin Exterior", "masa niveladora", "Pegamento",
+    "Muebles Jardin Exterior", "masa niveladora", "Pegamento",
     "Accesorios Pared PVC", "FIELTRO", "prymer", "Recubrimiento Superficies rusticas ",
     "Bajo Piso", "Servicios", "ACOPIO", "cesped", "Accesorios Quick-Step",
     "AUTOPOSANTE", "Limipiador SPC", "IMPRIMACION", "autonivelante",
@@ -63,6 +63,13 @@ EXCLUDE_LINEAS = {
     ("homogeneos", "zocalos homogeneos"),
     ("homogeneos", "accesorios homogeneos"),
     ("Porcelanato", "ATRIM"),
+}
+
+# (rubro, prefijo del nombre) puntuales: dentro de "Perfiles WPC" hay perfiles/
+# vigas de verdad (Perfil WPC ...) mezclados con capuchones/tapas (accesorio
+# chico), y el rubro no los separa por linea. Se filtran por nombre.
+EXCLUDE_NOMBRE_PREFIX = {
+    ("Perfiles WPC", "CAPUCHON"),
 }
 
 # (rubro, linea) puntuales cuyo Rubro en la planilla es enganoso: comparten
@@ -84,7 +91,7 @@ GROUP_MAP = [
     (("LVT",), "LVT / Vinílico click"),
     (("Porcelanato",), "Porcelanato"),
     (("Piso Ingenieria", "Prefinish", "Undfinish", "Tablones", "Deck de Madera"), "Piso de madera"),
-    (("Deck", "WPC", "TAPA DECK", "Baldosa Encastrable"), "Deck WPC"),
+    (("Deck", "WPC", "TAPA DECK", "Baldosa Encastrable", "Perfiles WPC"), "Deck WPC"),
     (("Revestimiento Pared",), "Revestimiento de pared"),
     (("Ceramico",), "Cerámico"),
     (("Vinilico", "VINILICO", "homogeneos", "rollo"), "Vinílico rollo/pegar"),
@@ -278,6 +285,10 @@ def main():
             excluidas_rubro += 1
             continue
         if (rubro, linea) in EXCLUDE_LINEAS:
+            excluidas_linea += 1
+            continue
+        nombre_up = (row[COL_NOMBRE] or "").strip().upper()
+        if any(rubro == r and nombre_up.startswith(pref) for r, pref in EXCLUDE_NOMBRE_PREFIX):
             excluidas_linea += 1
             continue
         if not row[COL_PRECIO]:
