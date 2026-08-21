@@ -94,7 +94,8 @@ function doGet(e) {
         fotos: getFotosSubidas(),
         populares: getPopulares(),
         ocultas: getOcultas(),
-        principales: getPrincipales()
+        principales: getPrincipales(),
+        ranking: getRanking()
       };
     } else if (p.fotos === '1') {
       out = { ok: true, fotos: getFotosSubidas() };
@@ -222,6 +223,31 @@ function getPopulares() {
     map[codigo] = (map[codigo] || 0) + 1;
   }
   cache.put('populares_v1', JSON.stringify(map), CONFIG.CACHE_SECONDS_POPULARES);
+  return map;
+}
+
+// ====== RANKING (chiste interno: quién sube más fotos, quién más consulta) ======
+// Devuelve {fotos: {vendedor: cantidad}, vistas: {vendedor: cantidad}}.
+function getRanking() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('ranking_v1');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+
+  var out = { fotos: contarPorVendedor(CONFIG.TAB_FOTOS), vistas: contarPorVendedor(CONFIG.TAB_VISTAS) };
+  cache.put('ranking_v1', JSON.stringify(out), CONFIG.CACHE_SECONDS_POPULARES);
+  return out;
+}
+
+// Las dos pestañas (Fotos Subidas, Vistas) tienen "Vendedor" en la columna C (índice 2).
+function contarPorVendedor(tabName) {
+  var sh = getSheet(tabName, ['Codigo', 'Nombre', 'Vendedor', 'Fecha']);
+  var vals = sh.getDataRange().getValues();
+  var map = {};
+  for (var r = 1; r < vals.length; r++) {
+    var vendedor = String(vals[r][2] || '').trim();
+    if (!vendedor) continue;
+    map[vendedor] = (map[vendedor] || 0) + 1;
+  }
   return map;
 }
 

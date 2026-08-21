@@ -26,8 +26,18 @@
   .rightbox{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:0 0 auto}
   .dolar{font-size:11px;color:rgba(255,255,255,.7);white-space:nowrap}
   .dolar b{color:var(--oro)}
-  .sesion{font-size:10.5px;color:rgba(255,255,255,.5);white-space:nowrap}
+  .sesion{font-size:10.5px;color:rgba(255,255,255,.5);white-space:nowrap;position:relative}
   .sesion a{color:rgba(255,255,255,.5)}
+  #rankingBtn{text-decoration:none;font-size:12px}
+  .rankingPop{display:none;position:absolute;top:22px;right:0;background:var(--card);color:var(--txt);
+    border-radius:11px;padding:12px 14px;width:200px;box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:30;
+    text-align:left;white-space:normal}
+  .rankingPop.on{display:block}
+  .rankingPop .rTitulo{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.3px;margin-bottom:8px}
+  .rankingPop .rLinea{font-size:13px;margin-bottom:6px;line-height:1.35}
+  .rankingPop .rLinea b{color:var(--oro-dark)}
+  .rankingPop .rVacio{font-size:12px;color:var(--muted)}
   .controls{max-width:1240px;margin:0 auto;padding:10px 0 4px}
   .login{position:fixed;inset:0;background:var(--negro);z-index:100;display:flex;
     align-items:center;justify-content:center;padding:20px}
@@ -173,7 +183,8 @@
     </div>
     <div class="rightbox">
       <div class="dolar" id="dolar">cotización…</div>
-      <div class="sesion"><span id="sesionUsuario"></span> · <a href="#" id="cerrarSesion">cerrar sesión</a></div>
+      <div class="sesion"><span id="sesionUsuario"></span> · <a href="#" id="cerrarSesion">cerrar sesión</a> · <a href="#" id="rankingBtn" title="Ranking">🏆</a></div>
+      <div class="rankingPop" id="rankingPop"></div>
     </div>
   </div>
   <div class="controls">
@@ -224,7 +235,7 @@
 // Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
 
-var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, dolar: null, fotosSubidas: {}, populares: {}, fotosOcultas: {}, fotosPrincipales: {} };
+var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, dolar: null, fotosSubidas: {}, populares: {}, fotosOcultas: {}, fotosPrincipales: {}, ranking: {fotos:{}, vistas:{}} };
 
 function fmtMoney(v, moneda){
   if(v==null) return '—';
@@ -275,6 +286,7 @@ function cargarEstadoFotos(){
       state.fotosOcultas = c.ocultas || {};
       state.fotosPrincipales = c.principales || {};
       state.populares = c.populares || {};
+      state.ranking = c.ranking || {fotos:{}, vistas:{}};
     }catch(e){}
   }
   fetch(SCRIPT_URL + '?estado=1')
@@ -287,7 +299,8 @@ function cargarEstadoFotos(){
       state.fotosOcultas = d.ocultas || {};
       state.fotosPrincipales = d.principales || {};
       state.populares = d.populares || {};
-      localStorage.setItem('bp_estado_fotos', JSON.stringify({fotos:state.fotosSubidas, ocultas:state.fotosOcultas, principales:state.fotosPrincipales, populares:state.populares}));
+      state.ranking = d.ranking || {fotos:{}, vistas:{}};
+      localStorage.setItem('bp_estado_fotos', JSON.stringify({fotos:state.fotosSubidas, ocultas:state.fotosOcultas, principales:state.fotosPrincipales, populares:state.populares, ranking:state.ranking}));
       if(nuevo !== anterior) renderGrid();  // solo re-renderiza si algo de las fotos cambió de verdad
     })
     .catch(function(){});
@@ -763,6 +776,36 @@ document.getElementById('cerrarSesion').addEventListener('click', function(e){
   e.preventDefault();
   localStorage.removeItem('bp_usuario');
   location.reload();
+});
+
+// Ranking chiste interno: quién sube más fotos, quién más consulta.
+function liderDe(mapa){
+  var mejor = null, mejorN = 0;
+  Object.keys(mapa || {}).forEach(function(k){
+    if(mapa[k] > mejorN){ mejor = k; mejorN = mapa[k]; }
+  });
+  return mejor ? {nombre: mejor, n: mejorN} : null;
+}
+function pintarRanking(){
+  var topFotos = liderDe(state.ranking.fotos);
+  var topVistas = liderDe(state.ranking.vistas);
+  var html = '<div class="rTitulo">🏆 Ranking (chiste interno)</div>';
+  if(topFotos) html += '<div class="rLinea">📸 Más fotos subidas:<br><b>' + topFotos.nombre + '</b> (' + topFotos.n + ')</div>';
+  if(topVistas) html += '<div class="rLinea">🔍 Más curioso/a:<br><b>' + topVistas.nombre + '</b> (' + topVistas.n + ')</div>';
+  if(!topFotos && !topVistas) html += '<div class="rVacio">Todavía no hay datos suficientes.</div>';
+  document.getElementById('rankingPop').innerHTML = html;
+}
+document.getElementById('rankingBtn').addEventListener('click', function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  pintarRanking();
+  document.getElementById('rankingPop').classList.toggle('on');
+});
+document.addEventListener('click', function(e){
+  var pop = document.getElementById('rankingPop');
+  if(pop.classList.contains('on') && e.target.id !== 'rankingBtn' && !pop.contains(e.target)){
+    pop.classList.remove('on');
+  }
 });
 
 var usuarioGuardado = localStorage.getItem('bp_usuario');
