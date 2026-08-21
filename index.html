@@ -224,7 +224,7 @@
   <div class="grid" id="grid"></div>
 </main>
 <div class="toast" id="toast"></div>
-<input type="file" id="fotoInput" accept="image/*" style="display:none">
+<input type="file" id="fotoInput" accept="image/*" multiple style="display:none">
 <div class="lightbox" id="lightbox">
   <button class="cerrar" id="lbCerrar">×</button>
   <button class="nav prev" id="lbPrev">‹</button>
@@ -429,14 +429,8 @@ function comprimirImagen(file){
   });
 }
 
-function subirFoto(p, file){
-  if(!SCRIPT_URL){
-    toast('Falta configurar SCRIPT_URL (ver README) para poder subir fotos.');
-    return;
-  }
-  var v = p.variantes[0];
-  toast('Subiendo foto…');
-  comprimirImagen(file).then(function(img){
+function subirUnaFoto(p, file){
+  return comprimirImagen(file).then(function(img){
     // vista previa al toque, antes de que confirme el servidor
     var localUrl = URL.createObjectURL(file);
     var card = document.querySelector('.card[data-id="' + p.id + '"] .ph');
@@ -454,13 +448,37 @@ function subirFoto(p, file){
         vendedor: localStorage.getItem('bp_vendedor') || ''
       })
     });
-  }).then(function(){
-    toast('¡Foto subida! Ya la ven todos.');
-    // no-cors no deja leer la respuesta: refrescamos el índice para confirmar.
-    setTimeout(cargarEstadoFotos, 1500);
-  }).catch(function(){
-    toast('No se pudo subir. Revisá la conexión e intentá de nuevo.');
   });
+}
+
+// Sube una o varias fotos de una, una por una (así el backend no se satura y
+// el progreso queda claro: "2 de 5", etc.).
+function subirFoto(p, files){
+  if(!SCRIPT_URL){
+    toast('Falta configurar SCRIPT_URL (ver README) para poder subir fotos.');
+    return;
+  }
+  var lista = Array.prototype.slice.call(files);
+  if(!lista.length) return;
+  var ok = 0, fallaron = 0;
+
+  function siguiente(i){
+    if(i >= lista.length){
+      if(fallaron){
+        toast(ok + ' foto' + (ok===1?'':'s') + ' subida' + (ok===1?'':'s') + ', ' + fallaron + ' no se pudo' + (fallaron===1?'':'ieron') + '.');
+      } else {
+        toast(ok > 1 ? '¡' + ok + ' fotos subidas! Ya las ven todos.' : '¡Foto subida! Ya la ven todos.');
+      }
+      setTimeout(cargarEstadoFotos, 1500);
+      return;
+    }
+    if(lista.length > 1) toast('Subiendo foto ' + (i+1) + ' de ' + lista.length + '…');
+    else toast('Subiendo foto…');
+    subirUnaFoto(p, lista[i])
+      .then(function(){ ok++; siguiente(i+1); })
+      .catch(function(){ fallaron++; siguiente(i+1); });
+  }
+  siguiente(0);
 }
 
 function grupos(){
@@ -673,9 +691,9 @@ function renderGrid(){
 
 var pendienteFoto = null;
 document.getElementById('fotoInput').addEventListener('change', function(e){
-  var file = e.target.files && e.target.files[0];
+  var files = e.target.files;
   e.target.value = '';
-  if(file && pendienteFoto) subirFoto(pendienteFoto, file);
+  if(files && files.length && pendienteFoto) subirFoto(pendienteFoto, files);
 });
 
 document.getElementById('buscar').addEventListener('input', function(e){
