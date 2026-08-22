@@ -574,7 +574,7 @@ function cardHtml(p){
   var pills = '';
   if(p.variantes.length>1) pills += '<span class="pill medidas">' + p.variantes.length + ' medidas</span>';
   else if(p.variantes[0].medidas) pills += '<span class="pill medidas">' + p.variantes[0].medidas + '</span>';
-  if(p.stock_total) pills += '<span class="pill stock">En stock</span>';
+  if(p.stock_total) pills += '<span class="pill stock">Disponible</span>';
   pills += '<span class="pill">' + p.unidad + '</span>';
 
   var variantesRows = p.variantes.map(function(v){
