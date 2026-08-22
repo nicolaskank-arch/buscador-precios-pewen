@@ -69,7 +69,11 @@ function doPost(e) {
       var archivo = carpeta.createFile(blob);
       archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-      var url = 'https://drive.google.com/thumbnail?id=' + archivo.getId() + '&sz=w1600';
+      // OJO: usar lh3.googleusercontent.com y NO drive.google.com/thumbnail --
+      // el navegador puede pedir esta con fetch() (CORS permisivo) y por eso
+      // se puede adjuntar al compartir por WhatsApp; la de drive.google.com
+      // se puede mostrar en una <img> pero un fetch() de JS la rechaza.
+      var url = 'https://lh3.googleusercontent.com/d/' + archivo.getId() + '=w1600';
       anotarFoto(codigo, body.nombre || '', url, body.vendedor || '');
 
       out = { ok: true, url: url };
@@ -116,14 +120,14 @@ function doGet(e) {
 function anotarFoto(codigo, nombre, url, vendedor) {
   var sh = getSheet(CONFIG.TAB_FOTOS, ['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha']);
   sh.appendRow([codigo, nombre, url, vendedor, nowIso()]);
-  CacheService.getScriptCache().remove('fotos_subidas_v2');
+  CacheService.getScriptCache().remove('fotos_subidas_v3');
 }
 
 // Devuelve {codigo: [{url, vendedor, fecha}, ...]} — puede haber varias fotos
 // por código (más recientes al final); el buscador arma la galería con eso.
 function getFotosSubidas() {
   var cache = CacheService.getScriptCache();
-  var hit = cache.get('fotos_subidas_v2');
+  var hit = cache.get('fotos_subidas_v3');
   if (hit) { try { return JSON.parse(hit); } catch (e) {} }
 
   var sh = getSheet(CONFIG.TAB_FOTOS, ['Codigo', 'Nombre', 'Url', 'Vendedor', 'Fecha']);
@@ -131,13 +135,29 @@ function getFotosSubidas() {
   var map = {};
   for (var r = 1; r < vals.length; r++) {
     var codigo = String(vals[r][0] || '').trim();
-    var url = String(vals[r][2] || '').trim();
+    var url = normalizarUrlFoto(vals[r][2]);
     if (!codigo || !url) continue;
     if (!map[codigo]) map[codigo] = [];
     map[codigo].push({ url: url, vendedor: String(vals[r][3] || ''), fecha: String(vals[r][4] || '') });
   }
-  cache.put('fotos_subidas_v2', JSON.stringify(map), CONFIG.CACHE_SECONDS_FOTOS);
+  cache.put('fotos_subidas_v3', JSON.stringify(map), CONFIG.CACHE_SECONDS_FOTOS);
   return map;
+}
+
+// Las fotos subidas por el equipo se guardaron en algun momento como
+// drive.google.com/thumbnail?id=... (se ve bien en una <img> pero un
+// fetch() de JS la rechaza por CORS, asi que no se puede adjuntar al
+// compartir por WhatsApp). lh3.googleusercontent.com es el mismo archivo
+// de Drive pero con CORS permisivo. Se normaliza aca -- en la LECTURA, no
+// en la planilla -- para que las fotos viejas tambien queden arregladas
+// sin tener que volver a subirlas, y para que ocultar/marcar principal
+// (que comparan por URL exacta) sigan matcheando pase lo que pase con el
+// formato historico de cada fila.
+function normalizarUrlFoto(url) {
+  url = String(url || '').trim();
+  var m = url.match(/[?&]id=([^&]+)/) || url.match(/\/d\/([^/=?]+)/);
+  if (!m) return url; // no es una url de Drive reconocida (ej. una foto original del catalogo) -- se deja igual
+  return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1600';
 }
 
 // ====== OCULTAR FOTO (subida O la original del catalogo — misma mecanica) ======
@@ -161,7 +181,7 @@ function getOcultas() {
   var map = {};
   for (var r = 1; r < vals.length; r++) {
     var codigo = String(vals[r][0] || '').trim();
-    var url = String(vals[r][1] || '').trim();
+    var url = normalizarUrlFoto(vals[r][1]);
     if (!codigo || !url) continue;
     if (!map[codigo]) map[codigo] = [];
     map[codigo].push(url);
@@ -191,7 +211,7 @@ function getPrincipales() {
   var map = {};
   for (var r = 1; r < vals.length; r++) {
     var codigo = String(vals[r][0] || '').trim();
-    var url = String(vals[r][1] || '').trim();
+    var url = normalizarUrlFoto(vals[r][1]);
     if (!codigo || !url) continue;
     map[codigo] = url; // la ultima fila de cada codigo pisa a la anterior
   }
