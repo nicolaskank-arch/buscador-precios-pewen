@@ -72,6 +72,14 @@ EXCLUDE_NOMBRE_PREFIX = {
     ("Perfiles WPC", "CAPUCHON"),
 }
 
+# Caso inverso: "ACCESORIOS DECK" es en su mayoria angulos/grampas/clips
+# (terminaciones chicas de verdad) y por eso esta en EXCLUDE_RUBROS, pero
+# adentro tiene las Alfajias -- que son las vigas/subestructura de WPC para
+# instalar el deck, un producto real y vendible, no un accesorio menor.
+INCLUDE_NOMBRE_PREFIX = {
+    ("ACCESORIOS DECK", "ALFAJIA"),
+}
+
 # (rubro, linea) puntuales cuyo Rubro en la planilla es enganoso: comparten
 # rubro con un piso pero en realidad son revestimiento de pared (Slimstone/
 # Slimwood son placas decorativas de pared que quedaron cargadas como
@@ -82,6 +90,8 @@ LINEA_GROUP_OVERRIDE = {
     ("Placa SPC", "Slimwood"): "Revestimiento de pared",
     ("homogeneos", "pared heterogenea"): "Revestimiento de pared",
     ("homogeneos", "pared homogeneo"): "Revestimiento de pared",
+    # Alfajias (vigas) rescatadas de ACCESORIOS DECK: van con el resto del deck.
+    ("ACCESORIOS DECK", "Deck WPC"): "Deck WPC",
 }
 
 # Rubro -> grupo/categoria amigable para los chips del buscador.
@@ -126,6 +136,7 @@ LINEA_FOLDER_OVERRIDE = {
     ("Placa SPC", "Slimwood"): ("Revestimiento Pared", "revs", "silenza"),
     ("homogeneos", "pared heterogenea"): ("Revestimiento Pared", "revs", "silenza"),
     ("homogeneos", "pared homogeneo"): ("Revestimiento Pared", "revs", "silenza"),
+    ("ACCESORIOS DECK", "Deck WPC"): ("Decks",),
 }
 
 STOPWORDS = {
@@ -185,6 +196,17 @@ def num_or_none(v):
     if isinstance(v, (int, float)):
         return round(v, 2)
     return None
+
+
+def medida_str(v):
+    """Normalmente es texto ('40*60*2900mm'), pero algunas filas tienen la
+    medida cargada como numero suelto (ej. 2.9) -- se castea sin inventarle
+    unidad."""
+    if v is None:
+        return None
+    if isinstance(v, float):
+        v = str(int(v)) if v.is_integer() else str(v)
+    return str(v).strip() or None
 
 
 def codigo_str(v):
@@ -281,13 +303,14 @@ def main():
             continue
         rubro = (row[COL_RUBRO] or "").strip()
         linea = (row[COL_LINEA] or "").strip()
-        if rubro in EXCLUDE_RUBROS:
+        nombre_up = (row[COL_NOMBRE] or "").strip().upper()
+        incluir_forzado = any(rubro == r and nombre_up.startswith(pref) for r, pref in INCLUDE_NOMBRE_PREFIX)
+        if rubro in EXCLUDE_RUBROS and not incluir_forzado:
             excluidas_rubro += 1
             continue
         if (rubro, linea) in EXCLUDE_LINEAS:
             excluidas_linea += 1
             continue
-        nombre_up = (row[COL_NOMBRE] or "").strip().upper()
         if any(rubro == r and nombre_up.startswith(pref) for r, pref in EXCLUDE_NOMBRE_PREFIX):
             excluidas_linea += 1
             continue
@@ -326,7 +349,7 @@ def main():
         w.writerow(["rubro", "linea", "nombre_base", "codigo", "nombre_original", "medidas", "precio_lista", "moneda"])
         for key, rows in sorted(multi.items()):
             for r in rows:
-                w.writerow([key[0], key[1], key[2], codigo_str(r[COL_CODIGO]), r[COL_NOMBRE], r[COL_MEDIDAS] or "",
+                w.writerow([key[0], key[1], key[2], codigo_str(r[COL_CODIGO]), r[COL_NOMBRE], medida_str(r[COL_MEDIDAS]) or "",
                             num_or_none(r[COL_PRECIO]), moneda_norm(r[COL_MONEDA])])
 
     fotos = cargar_fotos()
@@ -340,7 +363,7 @@ def main():
     sin_foto_rows = []
 
     for (rubro, linea, nombre_base), rows in sorted(grupos.items()):
-        rows_sorted = sorted(rows, key=lambda r: (r[COL_MEDIDAS] or ""))
+        rows_sorted = sorted(rows, key=lambda r: medida_str(r[COL_MEDIDAS]) or "")
         primero = rows_sorted[0]
         moneda = moneda_norm(primero[COL_MONEDA])
 
@@ -352,7 +375,7 @@ def main():
             variantes.append({
                 "codigo": codigo_str(r[COL_CODIGO]),
                 "nombre": r[COL_NOMBRE],
-                "medidas": (r[COL_MEDIDAS] or "").strip() or None,
+                "medidas": medida_str(r[COL_MEDIDAS]),
                 # "Precio de Lista" (columna F) es el precio sin descuento, igual al de
                 # tarjeta en 12 pagos. Lo que se cobra de verdad es la columna "0-50 m2"
                 # de contado/transferencia (ya trae el descuento admisible aplicado).
