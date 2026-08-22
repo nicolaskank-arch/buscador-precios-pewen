@@ -57,6 +57,13 @@ REEMPLAZOS_FORZADOS = {
     "22899", "18422", "25341", "23516", "23233",
 }
 
+# pisosalemanes.com es un competidor y sus fotos traen su marca de agua
+# encima -- no se usa mas como fuente, ni para productos nuevos ni para
+# completar SIN-FOTO. Si fotos_web_encontradas.json trae una entrada de ahi
+# (de una tanda de busqueda vieja) se ignora aca en vez de confiar en que a
+# nadie se le escape sacarla del JSON a mano.
+SITIOS_EXCLUIDOS = {"pisosalemanes.com"}
+
 
 def main():
     encontradas = json.loads(FOTOS_WEB_JSON.read_text(encoding="utf-8"))
@@ -72,7 +79,11 @@ def main():
     saltadas_id_inexistente = 0
     por_sitio = {}
 
+    saltadas_sitio_excluido = 0
     for pid, info in encontradas.items():
+        if info.get("fuente") in SITIOS_EXCLUIDOS:
+            saltadas_sitio_excluido += 1
+            continue
         p = by_id.get(pid)
         if p is None:
             saltadas_id_inexistente += 1
@@ -98,6 +109,8 @@ def main():
         print(f"  saltadas (ya tenian foto de otra fuente): {saltadas_ya_tenian}")
     if saltadas_id_inexistente:
         print(f"  saltadas (id ya no existe en productos.json): {saltadas_id_inexistente}")
+    if saltadas_sitio_excluido:
+        print(f"  saltadas (sitio excluido, ej. competidor con marca de agua): {saltadas_sitio_excluido}")
     print("Desglose por sitio de origen:")
     for sitio, n in sorted(por_sitio.items(), key=lambda kv: -kv[1]):
         print(f"  {sitio}: {n}")
