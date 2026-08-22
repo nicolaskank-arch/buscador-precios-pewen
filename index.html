@@ -297,16 +297,25 @@ function copiarTexto(txt, btn){
 // foto con el texto de pie de foto). Si el navegador no soporta compartir
 // archivos o la foto es de un sitio externo que bloquea la descarga (CORS),
 // cae a copiar solo el texto al portapapeles.
+var EXT_POR_MIME = {'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp', 'image/gif':'gif'};
+
 function compartirProducto(txt, fotoUrl, btn){
-  if(!fotoUrl || !navigator.share){
+  if(!fotoUrl){
     copiarTexto(txt, btn);
+    toast('Esta ficha todavía no tiene foto — se copió el texto');
+    return;
+  }
+  if(!navigator.share){
+    copiarTexto(txt, btn);
+    toast('Este navegador no permite adjuntar fotos acá — se copió el texto');
     return;
   }
   fetch(fotoUrl).then(function(r){
     if(!r.ok) throw new Error('http ' + r.status);
     return r.blob();
   }).then(function(blob){
-    var file = new File([blob], 'foto.jpg', {type: blob.type || 'image/jpeg'});
+    var ext = EXT_POR_MIME[blob.type] || 'jpg';
+    var file = new File([blob], 'foto.' + ext, {type: blob.type || 'image/jpeg'});
     if(navigator.canShare && !navigator.canShare({files: [file]})){
       throw new Error('compartir archivos no soportado');
     }
