@@ -586,8 +586,9 @@ function cardHtml(p){
     return '<button class="pagobtn' + (i===0?' active':'') + '" data-pago="' + k + '">' + label + '</button>';
   }).join('');
 
+  var otrosCodigos = p.variantes.slice(1).map(function(v){ return v.codigo; }).join(', ');
   var skuHtml = '<div class="sku"><span class="skuTag">SKU</span>' + p.variantes[0].codigo +
-    (p.variantes.length>1 ? '<span class="skuMas">+' + (p.variantes.length-1) + ' más</span>' : '') + '</div>';
+    (otrosCodigos ? '<span class="skuMas">+ ' + otrosCodigos + '</span>' : '') + '</div>';
 
   return '<div class="card" data-id="' + p.id + '">' +
     '<div class="ph"><span class="catlabel">' + p.grupo + '</span>' + fotoHtml + '</div>' +
@@ -725,9 +726,10 @@ function renderGrid(){
       var medidasTxt = p.variantes.length>1
         ? p.variantes.map(function(x){ return x.medidas; }).filter(Boolean).join(', ')
         : (v.medidas || '');
+      var otrosCodigos = p.variantes.slice(1).map(function(x){ return x.codigo; }).join(', ');
       var txt = p.nombre_base +
         (medidasTxt ? '\nMedidas: ' + medidasTxt : '') +
-        '\nSKU: ' + v.codigo + (p.variantes.length>1 ? ' (+' + (p.variantes.length-1) + ' más)' : '');
+        '\nSKU: ' + v.codigo + (otrosCodigos ? ', ' + otrosCodigos : '');
       var fotos = todasLasFotos(p);
       compartirProducto(txt, fotos[0], btn);
     });
