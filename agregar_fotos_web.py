@@ -55,6 +55,9 @@ REEMPLAZOS_FORZADOS = {
     "19029", "24644", "5263", "18188", "19376", "23771", "23772", "24781",
     "24783", "25316", "25318", "25319", "25472", "25372", "25373", "23063",
     "22899", "18422", "25341", "23516", "23233",
+    # 2026-08-24: matcheo local contra fotos.db (drive propio), confirmado
+    # por codigo de diseno real (9101), no por palabras genericas.
+    "20317",
 }
 
 # pisosalemanes.com es un competidor y sus fotos traen su marca de agua
