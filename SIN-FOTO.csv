@@ -1,13 +1,31 @@
 ﻿rubro,linea,nombre_base,nombre_ejemplo
+ACCESORIOS COLOCACION,,Taco Colocacion,TACO COLOCACION
 ACCESORIOS DECK,Deck WPC,Alfajias Deck Wpc (Coleccion Noble),"Alfajias Deck WPC x 2,90ml (Coleccion Noble)"
 ACCESORIOS DECK,Deck WPC,Alfajias Deck Wpc (Colección Prestigio),Alfajias Deck WPC (Colección Prestigio) x 2.90 ml
 ACCESORIOS DECK,Deck WPC,Alfajias Huecas Deck Wpc (Coleccion Oval),"Alfajias Huecas Deck WPC (Coleccion Oval) x 2,90 ml"
+COLCHONES,ESPUMA OPERA,Opera,OPERA 24 CM
+COLCHONES,ESPUMA OPERA EURO,Opera Euro,OPERA EURO 30CM
+COLCHONES,ESPUMA OPERA PLUS,Opera Plus,OPERA PLUS 35CM
+COLCHONES,ESPUMA SUPER LUJO,Super Lujo,SUPER LUJO 24 CM
+COLCHONES,RESORTE BONELL,Linea Black,LINEA BLACK 32CM
+COLCHONES,RESORTE BONELL,Prestige Alfa,PRESTIGE ALFA 30CM
+COLCHONES,ROYAL HD,Royal Hd,ROYAL HD 32CM
 Ceramico,ANGELGRES,Ceramico Malbec Rectificado,Ceramico Malbec (15x90) Rectificado -
 Ceramico,ANGELGRES,Ceramico Merlot Rectificado,Ceramico Merlot (15x90) Rectificado -
 Ceramico,ANGELGRES,Ceramico Tennessee Moon,Ceramico Tennessee Moon (15x60) - -
+Deck WPC,Deck WPC,Angulo Deck Camaleon Lapacho Oscuro,"Angulo Deck Camaleon Lapacho Oscuro (GT05) x2,9m"
+Deck WPC,Deck WPC,Angulo Deck Camaleon Medium Oak,"Angulo Deck Camaleon Medium Oak (GT03) x2,9m"
+Deck WPC,Deck WPC,Angulo Deck Camaleon Medium Teak,"Angulo Deck Camaleon Medium Teak (GT04) x2,9m"
+Deck WPC,Deck WPC,Angulo Deck Camaleon Roble Escandina,"Angulo Deck Camaleon Roble Escandina (GT02) x2,9m"
+Deck WPC,Deck WPC,Angulo Deck Wpc Oferta Light Grey,Angulo Deck WPC Oferta Light Grey (6x4) -
 Deck WPC,Deck WPC,"Deck Wpc Cream Mixed 2,9M","Deck WPC Cream Mixed - 2,9m"
 Deck WPC,Deck WPC,"Deck Wpc Grey Coleccion Long 3,66 Metros","Deck WPC Grey Coleccion Long 3,66 metros"
+Deck WPC,Deck WPC,Deck Wpc Lapacho Oscuro/Roble Escandinavo Colección Camaleón (Reversible),Deck WPC Lapacho Oscuro/Roble Escandinavo (GT05/GT02) Colección Camaleón (Reversible) -
+Deck WPC,Deck WPC,Deck Wpc Medium Oak/Medium Teak Colección Camaleón (Reversible),Deck WPC Medium Oak/Medium Teak (GT03/GT04) Colección Camaleón (Reversible) -
+Deck WPC,Deck WPC,Deck Wpc Oferta Light Grey,Deck WPC Oferta Light Grey (25*140*3660) -
 Deck WPC,Deck WPC,"Deck Wpc Teak B Mixed 2,81M","Deck WPC Teak B Mixed - 2,81m"
+Deck WPC,Deck WPC,Grampa Deck Wpc Oferta Light Grey,Grampa Deck WPC Oferta Light Grey
+Deck WPC,Deck WPC,Grampa Revestimiento De Wpc (Linea Nueva),Grampa Revestimiento de WPC (Linea Nueva)
 Flotante,Classic,Flotante Euro Home Haya Blanco D 9701 Classic,Flotante Euro Home Haya Blanco D-9701 Classic -
 Flotante,Flotante,Flotante Kronotex 4238 Natural Eiken,Flotante Kronotex 4238 Natural eiken - -
 Flotante,Flotante Outlet,Flotante Oferta K.Original 1995 Chene Aurelia,Flotante Oferta K.Original 1995 Chene Aurelia - -
@@ -68,6 +86,11 @@ Flotante Outlet,Water Resistant,"Flotante Krono Original []5948 Renaissance Oak 
 Flotante Outlet,Water Resistant,Flotante Krono Original []7005 Oak Tradition Hudson Bay Water Resistant Herringbone,Flotante Krono Original []7005 Oak Tradition Hudson Bay Water Resistant Herringbone
 Flotante Outlet,Water Resistant,Flotante Krono Original []K452 Ashland Oak Ac4 Water Resistant,Flotante Krono Original []K452 Ashland Oak AC4 Water Resistant -
 Flotante Water Resistan,Flotante Water Resistan,Flotante Krono Original 245 Blonde Forest Caja Fuzion Ac5 Water Resistant,Flotante Krono Original 245 Blonde Forest - Caja Fuzion AC5 - Water Resistant
+Flotante Water Resistan,Flotante Water Resistan,Flotante Krono Original 6505 Oak Tradition Water Resistant,Flotante Krono Original 6505 Oak Tradition Water Resistant -
+Flotante Water Resistan,Flotante Water Resistan,Flotante Krono Original 8072 Nirvana Light Brown Water Resistant,Flotante Krono Original 8072 Nirvana Light Brown Water Resistant -
+Flotante Water Resistan,Flotante Water Resistan,Flotante Krono Original Fulda Water Resistant,Flotante Krono Original FULDA Water Resistant -
+Flotante Water Resistan,More,Flotante Krono Original K478 Mushroom Carpenter Oak Water Resistant More,Flotante Krono Original K478 Mushroom Carpenter Oak Water Resistant MORE -
+Flotante Water Resistan,More,Flotante Krono Original K485 Natural Sterling Oak Water Resistant More,Flotante Krono Original K485 Natural Sterling Oak Water Resistant MORE -
 Flotante Water Resistan,Water Resistant,Flotante Kronotex 4617 Laminaat Maris Natuur Eiken Water Resistant,Flotante Kronotex 4617 Laminaat Maris natuur eiken Water Resistant -
 LVT,Challet Click,Lvt Roble Antiguo Gris Clt 980 Chalet Clic,LVT Roble Antiguo Gris CLT-980 Chalet Clic -
 LVT,Challet Click,Lvt Roble Escandinavo Clt 977 Chalet Clic,LVT Roble Escandinavo CLT-977 Chalet Clic -
@@ -84,6 +107,9 @@ LVT BERRY ALLOC,Berry Alloc,Vinilico Berry Aloc Columbian Oak 261 L Click 40,Vin
 LVT BERRY ALLOC,Berry Alloc,Vinilico Berry Aloc Lime 954 D Click 40,Vinilico Berry Aloc Lime 954 D Click 40 -
 LVT BERRY ALLOC,Berry Alloc,Vinilico Berry Aloc Lime 966 S Click 40 (Nuevo),Vinilico Berry Aloc Lime 966 S Click 40 (NUEVO) -
 LVT BERRY ALLOC,Berry Alloc,Vinilico Berry Aloc Toulon 109 S Click 40,Vinilico Berry Aloc Toulon 109 S Click 40 -
+MORE,MORE,Historic Oak 5947 More,historic oak - 5947 8mm -MORE
+ORCA,ORCA,5936 Lakeland Oak,5936 lakeland oak
+ORCA,ORCA,Buckingham Oak K329,Buckingham Oak - K329
 ORCA,ORCA,Flotante Krono Original 1523 Montreal Oak Ac5 Orca Con Manta,Flotante Krono Original 1523 Montreal Oak AC5 ORCA con Manta
 ORCA,ORCA,Flotante Krono Original []1530 Bristol Oak Orca Ac5,Flotante Krono Original []1530 Bristol Oak ORCA AC5
 ORCA,ORCA,Flotante Krono Original []R71012 Savana Orca Con Manta Ac5,Flotante Krono Original []R71012 Savana ORCA con Manta AC5
@@ -126,12 +152,17 @@ Outlet LVT Pegable,Outlet LVT Pegable,Lvt Oferta Jmw23318 / 0.3Wl,LVT Oferta JMW
 Outlet SPC,4mm + 0.5wl,"Spc Oferta Brown Oak Base: 2,86","SPC Oferta Brown Oak (1220*180*4/0.5wl) Base: 2,86 - -"
 Outlet SPC,4mm + 1 EVA + 0.5,"Spc 44136 Base: 2,48","SPC 44136 (1220*127*4*0,5+1EVA) Base: 2,48 - -"
 Outlet SPC,Outlet SPC,Aba Jmw073S,"ABA JMW073S 7,5mm (2 lvt + 4,5 WPC +1,5 EVA) - -"
+Outlet SPC,Outlet SPC,Spc Exclusivo Pewen 260,"SPC Exclusivo Pewen 260 (1524*228*4,5+1/0.55mm) - -"
 Outlet SPC,Outlet SPC,"Spc Exclusivo Pewen 80107 Manto 1,5 Eva /Base 1,76","SPC Exclusivo Pewen 80107 (6,5*180*1220/0,3) Manto 1,5 EVA /Base 1,76 - -"
 Outlet SPC,Outlet SPC,Spc L5001,SPC L5001 (1540*228*4+1/0.3) - -
+Outlet SPC,Outlet SPC,Spc L5002,SPC L5002 (1540*228*4+1/0.3) - -
+Outlet SPC,Outlet SPC,Spc L5003,SPC L5003 (1540*228*4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc L5004,SPC L5004 (1540*228*4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc L5005,SPC L5005 (1540*228*4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc L5006,SPC L5006 (1540*228*4+1/0.3) - -
+Outlet SPC,Outlet SPC,Spc L5007,SPC L5007 (1540*228*4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc L5008,SPC L5008 (1540*228*4+1/0.3) - -
+Outlet SPC,Outlet SPC,Spc L5009,SPC L5009 (1540*228*4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc Oferta 1002,SPC Oferta 1002 (1540x230x4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc Oferta 10381,SPC Oferta 10381 (1540x230x4+1/0.3) - -
 Outlet SPC,Outlet SPC,Spc Oferta 1063 1,SPC Oferta 1063-1 4 mm (0.3 wl) -
@@ -163,9 +194,11 @@ Outlet SPC,Outlet SPC,Spc Oferta 44 1092 15,"SPC Oferta 44 1092-15 (1540*230*5/0
 Outlet SPC,Outlet SPC,Spc Oferta 44 2008,SPC Oferta 44 2008 (1220*182*4+1 EVA*0.3wl) - -
 Outlet SPC,Outlet SPC,Spc Oferta 44 3221 1F,"SPC Oferta 44 3221-1F (1524*228*4,5/0,55+1,5 EVA) - -"
 Outlet SPC,Outlet SPC,Spc Oferta 44 8061,"SPC Oferta 44 8061 (1522*225*4,2/O,55+1 IXPE) - -"
+Outlet SPC,Outlet SPC,Spc Oferta 44 8068,"SPC Oferta 44 8068 (1220*180*5/O,3+1 IXPE) - -"
 Outlet SPC,Outlet SPC,Spc Oferta 44 8074,"SPC Oferta 44 8074 (1220*180*4/O,5+1 IXPE) - -"
 Outlet SPC,Outlet SPC,Spc Oferta 44 9018,SPC Oferta 44 9018 (1220*182*4+1 EVA*0.3wl) - -
 Outlet SPC,Outlet SPC,Spc Oferta 44 S B 209,SPC Oferta 44 S-B-4mm-209 4 mm (0.3 wl) -
+Outlet SPC,Outlet SPC,Spc Oferta 44 S B 281,SPC Oferta 44 S-B-4mm-281 4 mm (0.3 wl) -
 Outlet SPC,Outlet SPC,Spc Oferta 44 S W 001,SPC Oferta 44 S-W-4mm-001 4 mm (0.3 wl) -
 Outlet SPC,Outlet SPC,Spc Oferta 44 S W 002,SPC Oferta 44 S-W-4mm-002 4 mm (0.3 wl) -
 Outlet SPC,Outlet SPC,Spc Oferta 44 S W 007,SPC Oferta 44 S-W-6mm-007 6 mm -
@@ -240,6 +273,7 @@ Outlet SPC,Outlet SPC,Spc Oferta Smj Dt002 12,SPC Oferta SMJ-DT002-12 4 mm (0.3 
 Outlet SPC,Outlet SPC,Spc Oferta Smj Op001,SPC Oferta SMJ-OP001 4 mm (0.3 wl) -
 Outlet SPC,Outlet SPC,Spc Oferta Smj Op002,SPC Oferta SMJ-OP002 4 mm (0.3 wl) -
 Outlet SPC,Outlet SPC,Spc Oferta Smj Ot001,SPC Oferta SMJ-OT001 4 mm (0.3 wl) -
+Outlet SPC,Outlet SPC,Spc Oferta St477 5,"SPC Oferta ST477-5 (5mm+1,5/0,3wl) -"
 Outlet SPC,Outlet SPC,Spc Oferta St491 3,"SPC Oferta ST491-3 (5mm+1,5/0,3wl) -"
 Outlet SPC,Outlet SPC,"Spc Oferta St653 2 Base:2,65","SPC Oferta ST653-2 (1220*181*4/0.3) Base:2,65 (0.3mm wl) -"
 Outlet SPC,Outlet SPC,"Spc Oferta Tvt018 Base: 2,68","SPC Oferta TVT018 (1220*183*4+1EVA*0.3mm) Base: 2,68 - -"
@@ -273,6 +307,10 @@ Outlet WPC,Outlet WPC,"Wpc Oferta Jmw70006 Base:1,76","WPC Oferta JMW70006 (1220
 Outlet WPC,Outlet WPC,"Wpc Oferta Orgw179 15 : Base 2,65","WPC Oferta ORGW179-15 : Base 2,65 (181*1220*6,9/0.5 wl) (0.5mm wl) -"
 Outlet WPC,Outlet WPC,"Wpc Oferta Wrf53201 Base:1,76","WPC Oferta WRF53201 (1220*180*5*0.55) Base:1,76 - -"
 Outlet WPC,Outlet WPC,"Wpc Oferta Ydm11 3 : Base 2,78","WPC Oferta YDM11-3 : Base 2,78 (228*1220*8/0.5 wl) (0.5mm wl) -"
+Perfiles WPC,Perfiles WPC,Perfil Wpc Color Kc06 3 Lapacho,Perfil WPC Color KC06-3 Lapacho - 20*40*2900mm
+Perfiles WPC,Perfiles WPC,Perfil Wpc Color Kc85 Laos,Perfil WPC Color KC85 Laos - 20*40*2900mm
+Perfiles WPC,Perfiles WPC,Perfil Wpc Color Newt301 Incienso,Perfil WPC Color NewT301 Incienso - 40*60*2900mm
+Piso Ingenieria,Piso Ingenieria,Piso Ingenieria Roble Natural Mate,Piso Ingenieria Roble Natural Mate
 Piso Ingenieria,Piso Ingenieria,Pisos Ingenieria 1 Blattdiele (Eiche Natur Lackiert) (220 X 13Cm15M Primera,Pisos Ingenieria 1-Blattdiele (Eiche Natur Lackiert) (220 x 13cm15m Primera -
 Piso Ingenieria,Piso Ingenieria,Pisos Ingenieria Cala,Pisos Ingenieria Cala 13mm -
 Piso Ingenieria,Piso Ingenieria,Pisos Ingenieria Eiche Geolt Naturel Primera,"Pisos Ingenieria Eiche Geolt Naturel (4 x 10,5 x 120 x 1000) Primera -"
@@ -301,6 +339,7 @@ Porcelanato,ILVA,Porcelanato Ceppo Di Gre Mid,Porcelanato Ceppo di Gre Mid
 Porcelanato,ILVA,Porcelanato Escandinavo Estocolmo,Porcelanato Escandinavo Estocolmo
 Porcelanato,ILVA,Porcelanato Identica Olmo,Porcelanato Identica Olmo
 Porcelanato,ILVA,Porcelanato Le Pierte Del Casale Grigia,Porcelanato Le Pierte del Casale Grigia
+Porcelanato,ILVA,Porcelanato Limestone Beige,Porcelanato Limestone Beige
 Porcelanato,ILVA,Porcelanato Tribeca Concret Broadway Out,Porcelanato Tribeca Concret Broadway OUT
 Porcelanato,ILVA,Porcelanato Tribeca Wood Walker,Porcelanato Tribeca Wood Walker
 Porcelanato,ILVA,Porcelanato Wood Home Almond,Porcelanato Wood Home Almond
@@ -317,16 +356,24 @@ Prefinish,Prefinish,"Prefinish Viraró Primera Base 1,95 La Forestal Alto Parana
 Recubrimiento Superficies rusticas,Recubrimiento Superficies rusticas,K746,K746
 Revestimiento Pared,Linea Perfil Piedrafina,Revestimiento De Pared Interior Linea Perfil,Revestimiento de pared interior Linea Perfil 
 Revestimiento Pared,Linea Vertice Piedrafina,Revestimiento De Pared Interior Linea Vertice,Revestimiento de pared interior Linea Vertice
+Revestimiento Pared,Revestimiento Pared Exterior,Angulos Revestimiento Wpc Dark Coffee,Angulos Revestimiento WPC Dark Coffee (5x5)
+Revestimiento Pared,Revestimiento Pared Exterior,Angulos Revestimiento Wpc Light Grey,Angulos Revestimiento WPC Light Grey (5x5)
+Revestimiento Pared,Revestimiento Pared Exterior,Angulos Revestimiento Wpc Oferta Vibrant Yellow,Angulos Revestimiento WPC Oferta Vibrant Yellow (5x5)
 Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Dark Brown Oferta,Revestimiento Pared Exterior Dark Brown Oferta -
+Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Dark Coffee Oferta,Revestimiento Pared Exterior Dark Coffee Oferta -
+Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Light Grey Oferta,Revestimiento Pared Exterior Light Grey Oferta -
 Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Moka Kc01 Linea Horizon,Revestimiento Pared Exterior Moka KC01 Linea Horizon -
 Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Moka Kc01 Wpc Linea Flat,Revestimiento Pared Exterior Moka KC01 WPC Linea FLAT -
 Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Mysterious Black Oferta,Revestimiento Pared Exterior Mysterious Black Oferta -
 Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Shallow Coffee Oferta,Revestimiento Pared Exterior Shallow Coffee Oferta -
+Revestimiento Pared,Revestimiento Pared Exterior,Revestimiento Pared Exterior Vibrant Yellow Oferta,Revestimiento Pared Exterior Vibrant Yellow Oferta -
 Revestimiento Pared,Revestimiento Pared Interior,Revestimiento Pared Interior Alto Oferta,Revestimiento Pared Interior ALTO Oferta -
 Revestimiento Pared,Revestimiento Pared Interior,Revestimiento Pared Interior Zenit Oferta,Revestimiento Pared Interior ZENIT Oferta -
 Revestimiento Pared,Revestimiento Pared Interior MDF,Revestimiento Pared Interior Cappuccino Mdf Foliado Seda,Revestimiento Pared Interior Cappuccino MDF Foliado Seda -
 Revestimiento Pared,Revestimiento Pared Interior MDF,Revestimiento Pared Interior Nero Mdf Foliado Seda,Revestimiento Pared Interior Nero MDF Foliado Seda -
 Revestimiento Pared,Standart Piedrafina,Piedrafina Standart,Piedrafina STANDART
+SOMMIERS,FLEXI GOM,Base Sommier Alto + Patas,BASE SOMMIER 20CM ALTO + 12CM PATAS
+SOMMIERS,PRESTIGE,Base Sommier Alto + Patas,BASE SOMMIER 20CM ALTO + 12CM PATAS
 SPC,4mm + 0.3 (Linea Home),Spc Roble Gris 1 Lama (Max Core),SPC Roble Gris 1 Lama (Max Core) 4 mm (0.3 wl) -
 SPC,4mm + 0.3 (Pewen),Combo Pewen Linea 9100/9400 + Manta Eva Bonificada,COMBO PEWEN  LINEA 9100/9400 + MANTA EVA 1MM BONIFICADA
 VINILICO CLICK,5MM,Np 5M,NP 5M
