@@ -25,7 +25,7 @@ FOTOS_PEWEN_DIR = HERE.parent / "buscador-fotos-pewen"
 FOTOS_DB = FOTOS_PEWEN_DIR / "fotos.db"
 FOTOS_OUT_DIR = HERE / "fotos"
 
-SHEET_NAME = "Lista Definitiva (365)"
+SHEET_NAME_PREFIX = "Lista Definitiva"
 
 # Columnas (0-based) de la hoja, confirmadas contra el encabezado de fila 2.
 COL_CODIGO, COL_NOMBRE, COL_RUBRO, COL_LINEA, COL_MEDIDAS, COL_BASE, COL_PRECIO, COL_MONEDA = range(8)
@@ -291,7 +291,12 @@ def main():
         sys.exit(1)
 
     wb = openpyxl.load_workbook(xlsx_path, data_only=True)
-    ws = wb[SHEET_NAME]
+    candidatas = [n for n in wb.sheetnames if n.startswith(SHEET_NAME_PREFIX)]
+    if len(candidatas) != 1:
+        print(f"Esperaba una sola hoja que empiece con '{SHEET_NAME_PREFIX}', encontre {candidatas!r}")
+        sys.exit(1)
+    ws = wb[candidatas[0]]
+    print(f"Hoja: {candidatas[0]}")
 
     filas = []
     excluidas_rubro = 0
