@@ -535,8 +535,9 @@
     "url": "https://cdn.shopify.com/s/files/1/0656/7251/1711/files/43126.jpg?v=1755954564"
   },
   "22305": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2025/12/ofertas_43127.jpg"
+    "url": "https://www.maxipiso.com.ar/22305-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "22309": {
     "fuente": "pewenpisos.com.ar",
@@ -1439,8 +1440,9 @@
     "url": "https://cdn.shopify.com/s/files/1/0656/7251/1711/files/CloudStone.jpg?v=1758652525"
   },
   "24964": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2025/12/20080705_0000.jpg"
+    "url": "https://www.maxipiso.com.ar/24964-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "24976": {
     "fuente": "maxipiso.com.ar",
@@ -1639,8 +1641,9 @@
     "url": "https://cdn.shopify.com/s/files/1/0656/7251/1711/files/CREMA_MARFILKL8111.png?v=1771506642"
   },
   "25314": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2026/03/3221_0000-scaled.jpg"
+    "url": "https://www.maxipiso.com.ar/25314-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "25316": {
     "fuente": "pewenpisos.com.ar",
@@ -1648,8 +1651,9 @@
     "reemplazo_de": "pisosalemanes.com"
   },
   "25317": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2026/03/1092-15_0000-scaled.jpg"
+    "url": "https://www.maxipiso.com.ar/25317-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "25318": {
     "fuente": "pewenpisos.com.ar",
@@ -1829,8 +1833,9 @@
     "fuente": "ergopisos.com.ar"
   },
   "25471": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2026/08/SKU-25471-SPC-Oferta-2403_0002-scaled.jpg"
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164222/maxipiso/productos/25471-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "25472": {
     "fuente": "maxipiso.com.ar",
@@ -1838,16 +1843,19 @@
     "reemplazo_de": "pisosalemanes.com"
   },
   "25473": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2026/08/SKU-25473-SPC-Oferta-YR802_0002-scaled.jpg"
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164288/maxipiso/productos/25473-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "25475": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2026/08/SKU-25475-SPC-Oferta-2008_0000-scaled.jpg"
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164343/maxipiso/productos/25475-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "25476": {
-    "fuente": "pisosalemanes.com",
-    "url": "https://pisosalemanes.com/wp-content/uploads/2026/08/SKU-25476-SPC-Oferta-8118_0001-scaled.jpg"
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164365/maxipiso/productos/25476-1.jpg",
+    "fuente": "maxipiso.com.ar",
+    "reemplazo_de": "pisosalemanes.com"
   },
   "25491": {
     "fuente": "pewenpisos.com.ar",
@@ -2172,5 +2180,141 @@
   "23136": {
     "url": "https://cdn.casando.de/assets/pim/images/x768/ceeb693b1112ce482ebe9e9c60a9870db0cce0a9a651d67a0077bc0542f2eba1/3610796600-kronotex-laminat-superior-standard-d-5260-winter-eiche-hell-landhausdiele-001.webp",
     "fuente": "casando.de"
+  },
+  "22551": {
+    "url": "https://www.maxipiso.com.ar/22551-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25580": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1790966046/maxipiso/productos/25580-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25579": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1790965938/maxipiso/productos/25579-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25525": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1790624138/maxipiso/productos/25525-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "24880": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1789992315/maxipiso/productos/24880-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "24868": {
+    "url": "https://www.maxipiso.com.ar/24868-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "24414": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787243995/maxipiso/productos/24414-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "23806": {
+    "url": "https://www.maxipiso.com.ar/23806-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "22605": {
+    "url": "https://www.maxipiso.com.ar/22605-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "23079": {
+    "url": "https://www.maxipiso.com.ar/23079-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25487": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164466/maxipiso/productos/25487-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25536": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1791641701/maxipiso/productos/25536-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25537": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787928165/maxipiso/productos/25537-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25483": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164387/maxipiso/productos/25483-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25484": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1791641526/maxipiso/productos/25484-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25485": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1791641275/maxipiso/productos/25485-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25538": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787928440/maxipiso/productos/25538-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25486": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164449/maxipiso/productos/25486-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25539": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1791642624/maxipiso/productos/25539-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "24588": {
+    "url": "https://www.maxipiso.com.ar/24588-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25474": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787164319/maxipiso/productos/25474-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25586": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1791209255/maxipiso/productos/25586-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25589": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1791209186/maxipiso/productos/25589-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25325": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787156112/maxipiso/productos/ws7ztjhk0nzodairoq3o.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25500": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787158540/maxipiso/productos/25500-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25521": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787327891/maxipiso/productos/25521-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25519": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787328292/maxipiso/productos/25519-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25490": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787162624/maxipiso/productos/25490-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25489": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787162657/maxipiso/productos/25489-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25499": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787158782/maxipiso/productos/25499-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25501": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787157766/maxipiso/productos/2a4827283621e92d959502efcf4d1ce3.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25520": {
+    "url": "https://res.cloudinary.com/dnaom2evd/image/upload/v1787328467/maxipiso/productos/25520-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25269": {
+    "url": "https://www.maxipiso.com.ar/25269-1.jpg",
+    "fuente": "maxipiso.com.ar"
+  },
+  "25267": {
+    "url": "https://www.maxipiso.com.ar/25267-1.jpg",
+    "fuente": "maxipiso.com.ar"
   }
 }

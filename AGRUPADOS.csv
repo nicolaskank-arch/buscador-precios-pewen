@@ -1,4 +1,33 @@
 ﻿rubro,linea,nombre_base,codigo,nombre_original,medidas,precio_lista,moneda
+ACCESORIOS DECK,Deck WPC,ANGULO DECK WPC T 1 (COLECCIÓN NOBLE),18881,Angulo Deck WPC T-1 (Colección Noble) x 3.00 ml,3,31.0,USD
+ACCESORIOS DECK,Deck WPC,ANGULO DECK WPC T 1 (COLECCIÓN NOBLE),22048,Angulo Deck WPC T-1 (Colección Noble) x 2.20 ml,2.2,23.61,USD
+ACCESORIOS DECK,Deck WPC,ANGULO DECK WPC T 4 (COLECCIÓN NOBLE),19138,Angulo Deck WPC T-4 (Colección Noble) x 3.00 ml,3,31.0,USD
+ACCESORIOS DECK,Deck WPC,ANGULO DECK WPC T 4 (COLECCIÓN NOBLE),22049,Angulo Deck WPC T-4 (Colección Noble) x 2.20 ml,2.2,23.61,USD
+ACCESORIOS DECK,Deck WPC,ANGULO DECK WPC T 6 (COLECCIÓN NOBLE),19139,Angulo Deck WPC T-6 (Colección Noble) x 3.00 ml,3,31.0,USD
+ACCESORIOS DECK,Deck WPC,ANGULO DECK WPC T 6 (COLECCIÓN NOBLE),22310,Angulo Deck WPC T-6 (Colección Noble) x 2.20 ml,2.2,23.61,USD
+ACCESORIOS Reve Pared,Linea Perfil Piedrafina,TERMINACION REVESTIMIENTO DE PARED INTERIOR LINEA PERFIL,80054,terminacion revestimiento de pared interior Linea Perfil,pieza a 2800x37x18mm,30273.25,ARS
+ACCESORIOS Reve Pared,Linea Perfil Piedrafina,TERMINACION REVESTIMIENTO DE PARED INTERIOR LINEA PERFIL,80055,terminacion revestimiento de pared interior Linea Perfil,pieza b 2800x25x18mm,30273.25,ARS
+ACCESORIOS Reve Pared,Linea Vertice Piedrafina,TERMINACION REVESTIMIENTO DE PARED INTERIOR LINEA VERTICE,80056,terminacion revestimiento de pared interior Linea Vertice,pieza a 2800x27x18mm,30273.25,ARS
+ACCESORIOS Reve Pared,Linea Vertice Piedrafina,TERMINACION REVESTIMIENTO DE PARED INTERIOR LINEA VERTICE,80057,terminacion revestimiento de pared interior Linea Vertice,pieza b 2800x27x18mm,30273.25,ARS
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION INICIO/FIN,24915,Terminacion Inicio/Fin (KC06-3 Lapacho),2.9,23.8,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION INICIO/FIN,25084,Terminacion Inicio/Fin (KC13D Negro),2.9,23.8,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION INICIO/FIN,25381,Terminacion Inicio/Fin (KC11 Smoke Gray),2.9,23.8,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION INICIO/FIN,25382,Terminacion Inicio/Fin (KC08 Maple),2.9,23.8,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION PARA ESQUINA,24916,Terminacion para Esquina (KC06-3 Lapacho),2.9,29.62,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION PARA ESQUINA,25085,Terminacion para Esquina (KC14D Negro),2.9,29.62,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION PARA ESQUINA,25379,Terminacion para Esquina (KC11 Smoke Gray),2.9,29.62,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Exterior,TERMINACION PARA ESQUINA,25380,Terminacion para Esquina (KC08 Maple),2.9,29.62,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #12,21670,Angulo Inferior/Superior 2cm #12 (JC1033-0412),,8.96,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #12,21673,Angulo Inferior/Superior 3cm #12 (JC1034-0412),,11.78,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #12,21676,Angulo Inferior/Superior 5cm #12 (JC1035-0412),,29.06,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #23,21672,Angulo Inferior/Superior 2cm #23 (JC1033-E-23),,8.96,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #23,21675,Angulo Inferior/Superior 3cm #23 (JC1034-E-23),,11.78,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #23,21678,Angulo Inferior/Superior 5cm #23 (JC1035-E-23),,29.06,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #87,21671,Angulo Inferior/Superior 2cm #87 (JC1033-81387T),,8.96,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #87,21674,Angulo Inferior/Superior 3cm #87 (JC1034-81387T),,11.78,USD
+ACCESORIOS Reve Pared,Revestimiento Pared Interior,ANGULO INFERIOR/SUPERIOR #87,21677,Angulo Inferior/Superior 5cm #87 (JC1035-81387T),,29.06,USD
+AUTOPOSANTE,5MM,AUTOPOSANTE BALDOSA,80058,AUTOPOSANTE BALDOSA,470*470MM,103.86,USD
+AUTOPOSANTE,5MM,AUTOPOSANTE BALDOSA,80059,AUTOPOSANTE BALDOSA,"457,2*914,4MM",103.86,USD
 COLCHONES,ESPUMA OPERA,OPERA,S05,OPERA 24 CM,80*190,628715.82,ARS
 COLCHONES,ESPUMA OPERA,OPERA,S06,OPERA 24 CM,90*190,675385.07,ARS
 COLCHONES,ESPUMA OPERA,OPERA,S07,OPERA 24 CM,100*190,724992.77,ARS
@@ -71,6 +100,10 @@ Flotante One,Flotante One,FLOTANTE ONE CEREZO BRASIL COD. YT 6199 SILVER,7172,Fl
 Flotante One,Flotante One,FLOTANTE ONE CEREZO BRASIL COD. YT 6199 SILVER,8176,Flotante One Cerezo Brasil Cod. yt-6199 Silver 8.2 mm -,"8,2 x 19,5 x 1,21",17.76,USD
 Flotante One,Flotante One,FLOTANTE ONE NOGAL ROJO COD.6353A SILVER,7167,Flotante One Nogal Rojo Cod.6353A Silver 8.2 mm -,"8,2 x 19,5 x 1,21",17.76,USD
 Flotante One,Flotante One,FLOTANTE ONE NOGAL ROJO COD.6353A SILVER,8178,Flotante One Nogal Rojo Cod.6353A Silver 8.2 mm -,"8,2 x 19,5 x 1,21",17.76,USD
+Lacas y Adhesivos,Adecom,COLA ADESIV ADECOM E/3R KG.,4259,Cola Adesiv Adecom e/3r x 25 kg.,,165.09,USD
+Lacas y Adhesivos,Adecom,COLA ADESIV ADECOM E/3R KG.,4261,Cola Adesiv Adecom e/3r x 5 kg.,,33.04,USD
+Mantos,Manto VInilco,MANTOS EVA,19768,Mantos EVA 1.5 mm (1 rollo 20m2) -,,6.17,USD
+Mantos,Manto VInilco,MANTOS EVA,22501,Mantos EVA 1.0 mm (1 rollo 20m2) -,,4.7,USD
 Outlet SPC,Outlet SPC,SPC OFERTA 88024 007,22175,"SPC Oferta 88024-007 (Caja Marron 2,43) 4 mm (0.3 wl) -",4 x 181.00 x 1220.00,39.94,USD
 Outlet SPC,Outlet SPC,SPC OFERTA 88024 007,22176,"SPC Oferta 88024-007 (Caja Blanca 2,43) 4 mm (0.3 wl) -",4 x 181.00 x 1220.00,39.94,USD
 Outlet SPC,Outlet SPC,SPC OFERTA 88024 007,22178,"SPC Oferta 88024-007 (Caja Blanca 2,65) 4 mm (0.3 wl) -",4 x 181.00 x 1220.00,39.94,USD
@@ -81,6 +114,14 @@ Outlet SPC,Outlet SPC,"SPC OFERTA CDW 743 14#2 BASE: 2,65",23075,"SPC Oferta CDW
 Outlet SPC,Outlet SPC,SPC OFERTA ORGW335L 11,22067,"SPC Oferta ORGW335L-11 (7,5mm) (0.5mm wl) -","7,5 x 228.00 x 1520.00",51.85,USD
 Outlet SPC,Outlet SPC,SPC OFERTA ORGW335L 11,22068,SPC Oferta ORGW335L-11 (8mm) (0.5mm wl) -,8 x 228.00 x 1520.00,51.85,USD
 Outlet SPC,Outlet SPC,SPC OFERTA ORGW335L 11,22372,"SPC Oferta ORGW335L-11 (1220*228*7.5/0.5wl*2,78m2) (0.5mm wl) -","7,5 x 228.00 x 1220.00",51.85,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL DE WPC COLOR NEGRO KC13D,24749,Capuchon Perfil de WPC -60*40mm-Color Negro KC13D,,2.28,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL DE WPC COLOR NEGRO KC13D,24750,Capuchon Perfil de WPC -50*100mm-Color Negro KC13D,,4.56,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL WPC ROBLE,23129,Capuchon Perfil WPC Roble (40x60),,2.28,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL WPC ROBLE,23132,Capuchon Perfil WPC Roble (50x100),,4.56,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL WPC T 602,23131,Capuchon Perfil WPC T-602 (40x60),,2.28,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL WPC T 602,23134,Capuchon Perfil WPC T-602 (50x100),,4.56,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL WPC TABACO,23130,Capuchon Perfil WPC Tabaco (40x60),,2.28,USD
+Perfiles WPC,Perfiles WPC,CAPUCHON PERFIL WPC TABACO,23133,Capuchon Perfil WPC Tabaco (50x100),,4.56,USD
 Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR 1 ROBLE,22616,Perfil WPC Color 1 Roble - 40*60*2900mm,40*60*2900mm,30.08,USD
 Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR 1 ROBLE,24768,Perfil WPC Color 1 Roble - 20*40*2900mm,20*40*2900mm,29.16,USD
 Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR 5 TABACO,22617,Perfil WPC Color 5 Tabaco - 40*60*2900mm,40*60*2900mm,30.08,USD
@@ -94,6 +135,8 @@ Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR KC85 LAOS,25589,Perfil WPC Color KC85
 Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR KC85 LAOS,25590,Perfil WPC Color KC85 Laos - 40*60*2900mm,40 x 60 x 2900,41.83,USD
 Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR T602 ROBLE GRIS,22621,Perfil WPC Color T602 Roble Gris - 50*100*2900mm,50*100*2900mm,52.97,USD
 Perfiles WPC,Perfiles WPC,PERFIL WPC COLOR T602 ROBLE GRIS,22868,Perfil WPC Color T602 Roble Gris - 40*60*2900mm,40*60*2900mm,30.08,USD
+Piso Ingenieria,Piso Ingenieria,PISO INGENIERIA ROBLE NATURAL MATE,25325,Piso Ingenieria Roble Natural Mate,"12,4 x 127 x",130.58,USD
+Piso Ingenieria,Piso Ingenieria,PISO INGENIERIA ROBLE NATURAL MATE,25449,Piso Ingenieria Roble Natural Mate (3mm capa madera solida),14/3mm x 190mm x LV,228.9,USD
 Piso Ingenieria,Piso Ingenieria,PISOS INGENIERIA INCIENSO COLORADO SEMI MATE,19535,Pisos Ingenieria Incienso Colorado Semi-Mate (3mm Capa Madera Solida) -,"12,5 x 131.00 x",132.39,USD
 Piso Ingenieria,Piso Ingenieria,PISOS INGENIERIA INCIENSO COLORADO SEMI MATE,23116,Pisos Ingenieria Incienso Colorado Semi-Mate (3mm Capa Madera Solida) -,"12,4 x 131.00 x",132.39,USD
 Piso Ingenieria,Piso Ingenieria,PISOS INGENIERIA LAPACHO ESPESOR SEMI MATE,22325,"Pisos Ingenieria LAPACHO 12,50mm espesor Semi-Mate (3mm Capa Madera Solida) -","12,5 x 131.00 x 2200.00",132.39,USD
@@ -142,3 +185,176 @@ SOMMIERS,PRESTIGE,BASE SOMMIER ALTO + PATAS,S86,BASE SOMMIER 20CM ALTO + 12CM PA
 SPC,Aqua Blue,SPC COLUMBIA (SIMI KENTUCKY) AQUABLUE AQUABLUE,22439,"SPC Columbia (Simi Kentucky) AQUAblue (182*1220*4*0,3) AQUAblue (4mm + 0.3 wl) -",,41.08,USD
 SPC,Aqua Blue,SPC COLUMBIA (SIMI KENTUCKY) AQUABLUE AQUABLUE,22440,"SPC Columbia (Simi Kentucky) AQUAblue (183*1220*4*0,3) AQUAblue (4mm + 0.3 wl) -",,41.08,USD
 SPC,Aqua Blue,SPC COLUMBIA (SIMI KENTUCKY) AQUABLUE AQUABLUE,22508,"SPC Columbia (Simi Kentucky) AQUAblue (183*1220*4*0,3) AQUAblue (4mm + 0.3 wl) -",,41.08,USD
+Zocalos MDF,Cuadrado,#1 ZOCALO CUADRADO,17593,"#1 Zocalo Cuadrado x 2,60ml",,18.94,USD
+Zocalos MDF,Cuadrado,#1 ZOCALO CUADRADO,17628,"#1 Zocalo Cuadrado x 2,55ml",,18.61,USD
+Zocalos MDF,Cuadrado,#1 ZOCALO CUADRADO,17764,"#1 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#10 ZOCALO CUADRADO,17424,"#10 Zocalo Cuadrado x 2,70ml",,19.61,USD
+Zocalos MDF,Cuadrado,#10 ZOCALO CUADRADO,17767,"#10 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#11 ZOCALO CUADRADO,16676,"#11 Zocalo Cuadrado x 2,70ml",,19.61,USD
+Zocalos MDF,Cuadrado,#11 ZOCALO CUADRADO,17821,"#11 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#13 ZOCALO CUADRADO,16678,"#13 Zocalo Cuadrado x 2,70ml",,19.61,USD
+Zocalos MDF,Cuadrado,#13 ZOCALO CUADRADO,17744,"#13 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#14 ZOCALO CUADRADO,17606,"#14 Zocalo Cuadrado x 2,60ml",,18.94,USD
+Zocalos MDF,Cuadrado,#14 ZOCALO CUADRADO,17769,"#14 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#19 ZOCALO CUADRADO,17611,"#19 Zocalo Cuadrado x 2,60ml",,18.94,USD
+Zocalos MDF,Cuadrado,#19 ZOCALO CUADRADO,17946,"#19 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#24 ZOCALO CUADRADO,17616,"#24 Zocalo Cuadrado x 2,60ml",,18.94,USD
+Zocalos MDF,Cuadrado,#24 ZOCALO CUADRADO,17948,"#24 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#40 ZOCALO CUADRADO,17617,"#40 Zocalo Cuadrado x 2,60ml",,18.94,USD
+Zocalos MDF,Cuadrado,#40 ZOCALO CUADRADO,18304,"#40 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#41 ZOCALO CUADRADO,16688,"#41 Zocalo Cuadrado x 2,70ml",,19.61,USD
+Zocalos MDF,Cuadrado,#41 ZOCALO CUADRADO,17747,"#41 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuadrado,#42 ZOCALO CUADRADO,17619,"#42 Zocalo Cuadrado x 2,60ml",,18.94,USD
+Zocalos MDF,Cuadrado,#42 ZOCALO CUADRADO,17822,"#42 Zocalo Cuadrado x 2,75ml",,19.97,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,7511,Cuarta Caña MDF #6 x 2.70 ml,,10.26,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,16182,Cuarta Caña MDF #10 x 2.70 ml,,10.26,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,16183,Cuarta Caña MDF #11 x 2.70 ml,,10.26,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,17911,Cuarta Caña MDF #4 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18027,Cuarta Caña MDF #24 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18031,Cuarta Caña MDF #12 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18286,Cuarta Caña MDF #14 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18287,Cuarta Caña MDF #15 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18290,Cuarta Caña MDF #17 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18291,Cuarta Caña MDF #18 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18295,Cuarta Caña MDF #47 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18480,Cuarta Caña MDF #2 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18536,Cuarta Caña MDF #20 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18728,Cuarta Caña MDF #10 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18868,Cuarta Caña MDF #3 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18869,Cuarta Caña MDF #22 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18870,Cuarta Caña MDF #23 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,18877,Cuarta Caña MDF #3 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,19429,Cuarta Caña MDF #11 x 2.75 ml,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,19740,Cuarta Caña MDF #13 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF #,19741,Cuarta Caña MDF #42 x 2.60 ml,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,3731,Cuarta Caña MDF #1 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,16191,Cuarta Caña MDF #11 x 2.55 ml.,,10.19,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,16193,Cuarta Caña MDF #13 x 2.55 ml.,,10.19,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,17913,Cuarta Caña MDF #49 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,17914,Cuarta Caña MDF #19 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,17915,Cuarta Caña MDF #49 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18173,Cuarta Caña MDF #40 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18202,Cuarta Caña MDF #5 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18204,Cuarta Caña MDF #14 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18205,Cuarta Caña MDF #45 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18206,Cuarta Caña MDF #47 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18207,Cuarta Caña MDF #43 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18208,Cuarta Caña MDF #9 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18209,Cuarta Caña MDF #43 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18214,Cuarta Caña MDF #16 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18215,Cuarta Caña MDF #44 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18216,Cuarta Caña MDF #21 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18288,Cuarta Caña MDF #15 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18443,Cuarta Caña MDF #19 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18535,Cuarta Caña MDF #20 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,18912,Cuarta Caña MDF #40 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19019,Cuarta Caña MDF #41 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19132,Cuarta Caña MDF #2 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19133,Cuarta Caña MDF #4 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19134,Cuarta Caña MDF #6 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19135,Cuarta Caña MDF #13 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19208,Cuarta Caña MDF #42 x 2.75 ml.,,10.99,USD
+Zocalos MDF,Cuarta Caña,CUARTA CAÑA MDF # .,19209,Cuarta Caña MDF #41 x 2.60 ml.,,9.89,USD
+Zocalos MDF,Europeo,#1 ZOCALO EUROPEO,7472,"#1 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#1 ZOCALO EUROPEO,11314,"#1 Zocalo Europeo x 2,55ml",,19.36,USD
+Zocalos MDF,Europeo,#1 ZOCALO EUROPEO,17866,"#1 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#10 ZOCALO EUROPEO,6285,"#10 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#10 ZOCALO EUROPEO,13269,"#10 Zocalo Europeo x 2,55ml",,19.36,USD
+Zocalos MDF,Europeo,#10 ZOCALO EUROPEO,17730,"#10 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#11 ZOCALO EUROPEO,14737,"#11 Zocalo Europeo x 2,55ml",,19.36,USD
+Zocalos MDF,Europeo,#11 ZOCALO EUROPEO,17633,"#11 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#11 ZOCALO EUROPEO,18025,"#11 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#12 ZOCALO EUROPEO,7476,"#12 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#12 ZOCALO EUROPEO,17925,"#12 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#13 ZOCALO EUROPEO,7477,"#13 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#13 ZOCALO EUROPEO,11315,"#13 Zocalo Europeo x 2,55ml",,19.36,USD
+Zocalos MDF,Europeo,#13 ZOCALO EUROPEO,17870,"#13 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#14 ZOCALO EUROPEO,7478,"#14 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#14 ZOCALO EUROPEO,17819,"#14 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#15 ZOCALO EUROPEO,17457,"#15 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#15 ZOCALO EUROPEO,17782,"#15 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#19 ZOCALO EUROPEO,17461,"#19 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#19 ZOCALO EUROPEO,17924,"#19 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#2 ZOCALO EUROPEO,6269,"#2 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#2 ZOCALO EUROPEO,11090,"#2 Zocalo Europeo x 2,55ml",,19.36,USD
+Zocalos MDF,Europeo,#20 ZOCALO EUROPEO,17462,"#20 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#20 ZOCALO EUROPEO,17737,"#20 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#22 ZOCALO EUROPEO,17464,"#22 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#22 ZOCALO EUROPEO,17739,"#22 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#23 ZOCALO EUROPEO,11948,"#23 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#23 ZOCALO EUROPEO,17872,"#23 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#24 ZOCALO EUROPEO,17465,"#24 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#24 ZOCALO EUROPEO,17869,"#24 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#3 ZOCALO EUROPEO,7473,"#3 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#3 ZOCALO EUROPEO,17920,"#3 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#4 ZOCALO EUROPEO,6282,"#4 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#4 ZOCALO EUROPEO,11091,"#4 Zocalo Europeo x 2,55ml",,19.36,USD
+Zocalos MDF,Europeo,#4 ZOCALO EUROPEO,17917,"#4 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#40 ZOCALO EUROPEO,17466,"#40 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#40 ZOCALO EUROPEO,17731,"#40 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#41 ZOCALO EUROPEO,17467,"#41 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#41 ZOCALO EUROPEO,17740,"#41 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#44 ZOCALO EUROPEO,17621,"#44 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#44 ZOCALO EUROPEO,17820,"#44 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#5 ZOCALO EUROPEO,6283,"#5 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#5 ZOCALO EUROPEO,17727,"#5 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#6 ZOCALO EUROPEO,6270,"#6 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#6 ZOCALO EUROPEO,17921,"#6 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#7 ZOCALO EUROPEO,6284,"#7 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#7 ZOCALO EUROPEO,17728,"#7 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Europeo,#9 ZOCALO EUROPEO,7475,"#9 Zocalo Europeo x 2,60ml",,19.71,USD
+Zocalos MDF,Europeo,#9 ZOCALO EUROPEO,17781,"#9 Zocalo Europeo x 2,75ml",,20.73,USD
+Zocalos MDF,Linea Yuan (Nuevo Zocalo MDF),KALON #,22527,"Kalon 6cm #14 x 2,75 ml",6cm x 2.75 x 15mm,22.71,USD
+Zocalos MDF,Linea Yuan (Nuevo Zocalo MDF),KALON #,22530,"Kalon 8cm #14 x 2,75 ML",8cm x 2.75 x 15mm,26.92,USD
+Zocalos MDF,Linea Yuan (Nuevo Zocalo MDF),KELI #,22526,"Keli 6cm #14 x 2,75 ml",6cm x 2.75 x 15mm,22.84,USD
+Zocalos MDF,Linea Yuan (Nuevo Zocalo MDF),KELI #,22529,"Keli 8cm #14 x 2,75 ml",8cm x 2.75 x 15mm,26.92,USD
+Zocalos MDF,Linea Yuan (Nuevo Zocalo MDF),ZIBA #,22525,"Ziba 6cm #14 x 2,75 ml",6cm x 2.75 x 15mm,22.71,USD
+Zocalos MDF,Linea Yuan (Nuevo Zocalo MDF),ZIBA #,22528,"Ziba 8cm #14 x 2,75 ml",8cm x 2.75 x 15mm,26.92,USD
+Zocalos MDF,Premium,#14 ZOCALO PREMIUN 3/,18172,"#14 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#14 ZOCALO PREMIUN 3/,18175,"#14 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#21 ZOCALO PREMIUN 3/,19046,"#21 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#21 ZOCALO PREMIUN 3/,19734,"#21 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#23 ZOCALO PREMIUN 3/,17661,"#23 Zocalo Premiun 3/4x8 x 2,55ml",,19.82,USD
+Zocalos MDF,Premium,#23 ZOCALO PREMIUN 3/,19048,"#23 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#24 ZOCALO PREMIUN 3/,19049,"#24 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#24 ZOCALO PREMIUN 3/,19735,"#24 Zocalo Premiun 3/4x8 x 2,70ml",,20.98,USD
+Zocalos MDF,Premium,#26 ZOCALO PREMIUN 3/,17657,"#26 Zocalo Premiun 3/4x8 x 2,70ml",,20.98,USD
+Zocalos MDF,Premium,#26 ZOCALO PREMIUN 3/,18483,"#26 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#26 ZOCALO PREMIUN 3/,19403,"#26 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#40 ZOCALO PREMIUN 3/,17803,"#40 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#40 ZOCALO PREMIUN 3/,18060,"#40 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#41 ZOCALO PREMIUN 3/,17659,"#41 Zocalo Premiun 3/4x8 x 2,55ml",,19.82,USD
+Zocalos MDF,Premium,#41 ZOCALO PREMIUN 3/,17804,"#41 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#41 ZOCALO PREMIUN 3/,18062,"#41 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#44 ZOCALO PREMIUN 3/,17807,"#44 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#44 ZOCALO PREMIUN 3/,18299,"#44 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#47 ZOCALO PREMIUN 3/,17810,"#47 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#47 ZOCALO PREMIUN 3/,17818,"#47 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#48 ZOCALO PREMIUN 3/,17811,"#48 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#48 ZOCALO PREMIUN 3/,18064,"#48 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos MDF,Premium,#9 ZOCALO PREMIUN 3/,17815,"#9 Zocalo Premiun 3/4x8 x 2,75ml",,21.31,USD
+Zocalos MDF,Premium,#9 ZOCALO PREMIUN 3/,19732,"#9 Zocalo Premiun 3/4x8 x 2,60ml",,20.21,USD
+Zocalos Vinilico,Terminaciones Waterproof,ZOCALO EPS MAX W CUADRADO,22577,Zocalo EPS Max W Cuadrado (14mm*75mm*2.90m),2.9,22.87,USD
+Zocalos Vinilico,Terminaciones Waterproof,ZOCALO EPS MAX W CUADRADO,25290,Zocalo EPS Max W Cuadrado 6cm,2.9,10.91,USD
+adhesivos,Adhesivo Acrilico para pisos vinilicos,K 645,80028,K-645,25kgs,330.0,USD
+adhesivos,Adhesivo Acrilico para pisos vinilicos,K 645,80029,K-645,10kgs,138.95,USD
+adhesivos,Adhesivo Acrilico para pisos vinilicos,K 645,80030,K-645,4kgs,59.05,USD
+adhesivos,Adhesivo Acrilico para pisos vinilicos,K 645,80031,K-645,1kgs,17.37,USD
+adhesivos,Adhesivo Acrilico pisos técnicos,K 650,80018,K – 650,4 kg,125.05,USD
+adhesivos,Adhesivo Acrilico pisos técnicos,K 650,80032,K-650,20 kgs,590.53,USD
+adhesivos,Adhesivo Doble contacto,K 2018,80025,k-2018,14kg,323.05,USD
+adhesivos,Adhesivo Doble contacto,K 2018,80026,k-2018,"2,8kg",69.47,USD
+adhesivos,Adhesivo Vinilico Premium Monocomponente,K 1022,80023,K-1022,5KGS,52.11,USD
+adhesivos,Adhesivo Vinilico Premium Monocomponente,K 1022,80024,K-1022,25KS,225.79,USD
+adhesivos,DC fana,ADHESIVO DC FANA SIN TOLUENO,80010,Adhesivo DC Fana X90 Sin Tolueno,"2,8 kgs",112.51,USD
+adhesivos,DC fana,ADHESIVO DC FANA SIN TOLUENO,80011,Adhesivo DC Fana X90 Sin Tolueno,7 kgs,249.93,USD
+adhesivos,DC fana,ADHESIVO DC FANA SIN TOLUENO,80012,Adhesivo DC Fana X90 Sin Tolueno,14 kgs,475.62,USD
+adhesivos,DC fana,ADHESIVO DC FANACOLA 90,80013,Adhesivo DC Fanacola 90,"2,8 kgs",108.21,USD
+adhesivos,DC fana,ADHESIVO DC FANACOLA 90,80014,Adhesivo DC Fanacola 90,7 kgs,240.0,USD
+adhesivos,DC fana,ADHESIVO DC FANACOLA 90,80015,Adhesivo DC Fanacola 90,14 kgs,455.78,USD
+adhesivos,epoxidico bicomponente,K 300,80019,K 300,1kgs,29.53,USD
+adhesivos,epoxidico bicomponente,K 300,80020,K 300,10kgs,222.32,USD
+masa niveladora,MASA BICOMPONENTE,KL 73,80040,KL -73,7kg,34.74,USD
+masa niveladora,MASA BICOMPONENTE,KL 73,80041,KL -73,35kg,128.53,USD
+prymer,Prymer acrilico monocomponente,K 1008,80021,k-1008,4 lt,59.05,USD
+prymer,Prymer acrilico monocomponente,K 1008,80022,k-1008,10 lt,125.05,USD

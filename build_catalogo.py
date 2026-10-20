@@ -25,7 +25,10 @@ FOTOS_PEWEN_DIR = HERE.parent / "buscador-fotos-pewen"
 FOTOS_DB = FOTOS_PEWEN_DIR / "fotos.db"
 FOTOS_OUT_DIR = HERE / "fotos"
 
-SHEET_NAME_PREFIX = "Lista Definitiva"
+# Nico le cambia el nombre a la hoja en cada envio ("Lista Definitiva (365)",
+# "Lista Definitiva 21-9", "Lista 20-10"...). Se toma la unica que empiece con
+# "Lista"; la otra hoja del libro es "Resumen de precios y descuentos".
+SHEET_NAME_PREFIX = "Lista"
 
 # Columnas (0-based) de la hoja, confirmadas contra el encabezado de fila 2.
 COL_CODIGO, COL_NOMBRE, COL_RUBRO, COL_LINEA, COL_MEDIDAS, COL_BASE, COL_PRECIO, COL_MONEDA = range(8)
@@ -41,16 +44,23 @@ PAGO_COLS = {
     "tarjeta12": range(31, 36),
 }
 
+# Lo que NO es piso, pared ni accesorio: no entra al buscador.
 EXCLUDE_RUBROS = {
-    "Zocalos MDF", "Zocalos Vinilico", "Terminaciones", "ACCESORIOS Reve Pared",
-    "ACCESORIOS DECK", "Weber", "adhesivos", "Lacas y Adhesivos", "Mantos",
-    "Muebles Jardin Exterior", "masa niveladora", "Pegamento",
-    "Accesorios Pared PVC", "FIELTRO", "prymer", "Recubrimiento Superficies rusticas ",
-    "Bajo Piso", "Servicios", "ACOPIO", "cesped", "Accesorios Quick-Step",
-    "AUTOPOSANTE", "Limipiador SPC", "IMPRIMACION", "autonivelante",
-    "Revestimieto de Pileta",
+    "Muebles Jardin Exterior", "Recubrimiento Superficies rusticas ",
+    "Servicios", "ACOPIO", "cesped", "Revestimieto de Pileta",
     # DECO son objetos de decoracion (bandejas, botellas, etc.), no piso ni pared.
     "DECO",
+}
+
+# Accesorios (zocalos, terminaciones, adhesivos, mantos...). Hasta 2026-10
+# quedaban afuera; ahora entran al buscador en su propio grupo "Accesorios"
+# para no mezclarse con los pisos. No llevan cartel de "Nuevo".
+ACCESORIO_RUBROS = {
+    "Zocalos MDF", "Zocalos Vinilico", "Terminaciones", "ACCESORIOS Reve Pared",
+    "ACCESORIOS DECK", "Weber", "adhesivos", "Lacas y Adhesivos", "Mantos",
+    "masa niveladora", "Pegamento", "Accesorios Pared PVC", "FIELTRO", "prymer",
+    "Bajo Piso", "Accesorios Quick-Step", "AUTOPOSANTE", "Limipiador SPC",
+    "IMPRIMACION", "autonivelante", "ACCESORIOS COLOCACION", "TAPA DECK",
 }
 
 # (rubro, linea) puntuales que hay que sacar del catalogo aunque su rubro en
@@ -58,25 +68,30 @@ EXCLUDE_RUBROS = {
 # que por lo demas es piso de verdad (ej. "Baldosa Encastrable Deck WPC" trae
 # baldosas reales + los angulos/esquineros de esa misma baldosa; "ATRIM" dentro
 # de Porcelanato son varillas/perfiles de aluminio, no porcelanato).
-EXCLUDE_LINEAS = {
+ACCESORIO_LINEAS = {
     ("Baldosa Encastrable Deck WPC", "Angulos"),
     ("homogeneos", "zocalos homogeneos"),
     ("homogeneos", "accesorios homogeneos"),
     ("Porcelanato", "ATRIM"),
+    ("Porcelanato", "Niveladores"),
+    ("homogeneos", "adhesivo"),
 }
 
 # (rubro, prefijo del nombre) puntuales: dentro de "Perfiles WPC" hay perfiles/
 # vigas de verdad (Perfil WPC ...) mezclados con capuchones/tapas (accesorio
 # chico), y el rubro no los separa por linea. Se filtran por nombre.
-EXCLUDE_NOMBRE_PREFIX = {
+ACCESORIO_NOMBRE_PREFIX = {
     ("Perfiles WPC", "CAPUCHON"),
 }
+# En cualquier rubro: angulos/grampas/clips sueltos que vienen mezclados con
+# el piso (ej. "Angulo Deck Camaleon" dentro de "Deck WPC").
+ACCESORIO_NOMBRE_INICIO = ("ANGULO", "GRAMPA", "CLIP", "ESQUINERO", "PEDESTAL", "TORNILLO")
 
 # Caso inverso: "ACCESORIOS DECK" es en su mayoria angulos/grampas/clips
 # (terminaciones chicas de verdad) y por eso esta en EXCLUDE_RUBROS, pero
 # adentro tiene las Alfajias -- que son las vigas/subestructura de WPC para
 # instalar el deck, un producto real y vendible, no un accesorio menor.
-INCLUDE_NOMBRE_PREFIX = {
+DECK_NOMBRE_PREFIX = {
     ("ACCESORIOS DECK", "ALFAJIA"),
 }
 
@@ -90,8 +105,6 @@ LINEA_GROUP_OVERRIDE = {
     ("Placa SPC", "Slimwood"): "Revestimiento de pared",
     ("homogeneos", "pared heterogenea"): "Revestimiento de pared",
     ("homogeneos", "pared homogeneo"): "Revestimiento de pared",
-    # Alfajias (vigas) rescatadas de ACCESORIOS DECK: van con el resto del deck.
-    ("ACCESORIOS DECK", "Deck WPC"): "Deck WPC",
 }
 
 # Rubro -> grupo/categoria amigable para los chips del buscador.
@@ -108,7 +121,20 @@ GROUP_MAP = [
 ]
 
 
-def grupo_de(rubro, linea):
+def es_accesorio(rubro, linea, nombre):
+    nombre_up = (nombre or "").strip().upper()
+    if any(rubro == r and nombre_up.startswith(pref) for r, pref in DECK_NOMBRE_PREFIX):
+        return False  # Alfajias: vigas del deck, van con el deck
+    return (rubro in ACCESORIO_RUBROS or (rubro, linea) in ACCESORIO_LINEAS
+            or nombre_up.startswith(ACCESORIO_NOMBRE_INICIO)
+            or any(rubro == r and nombre_up.startswith(pref) for r, pref in ACCESORIO_NOMBRE_PREFIX))
+
+
+def grupo_de(rubro, linea, nombre=""):
+    if es_accesorio(rubro, linea, nombre):
+        return "Accesorios"
+    if any(rubro == r for r, _ in DECK_NOMBRE_PREFIX):
+        return "Deck WPC"
     override = LINEA_GROUP_OVERRIDE.get((rubro, linea))
     if override:
         return override
@@ -169,10 +195,12 @@ def moneda_norm(m):
     return "ARS"
 
 
-def unidad_de(rubro):
+def unidad_de(rubro, linea="", nombre=""):
     rubro_l = (rubro or "").lower()
     if any(k in rubro_l for k in ("zocalo", "terminacion", "tapajunta", "angulo")):
         return "ml"
+    if es_accesorio(rubro, linea, nombre) and not any(k in rubro_l for k in ("manto", "bajo piso", "fieltro")):
+        return "unidad"  # adhesivos, angulos de pared, limpiador...
     return "m2"
 
 
@@ -255,6 +283,11 @@ def folders_para_rubro(rubro, linea):
 
 
 def buscar_foto(rubro, linea, nombre, fotos_por_carpeta):
+    # Los accesorios caen en carpetas de piso por el nombre del rubro ("Zocalos
+    # Vinilico" -> vinilicos, "ACCESORIOS DECK" -> Decks) y se llevarian la
+    # foto de un piso. Sin foto es mejor que una foto equivocada.
+    if es_accesorio(rubro, linea, nombre):
+        return None
     folders = folders_para_rubro(rubro, linea)
     if not folders:
         return None
@@ -300,7 +333,6 @@ def main():
 
     filas = []
     excluidas_rubro = 0
-    excluidas_linea = 0
     excluidas_sin_precio = 0
     excluidas_sin_stock = 0
     for row in ws.iter_rows(min_row=3, max_row=ws.max_row, values_only=True):
@@ -308,16 +340,8 @@ def main():
             continue
         rubro = (row[COL_RUBRO] or "").strip()
         linea = (row[COL_LINEA] or "").strip()
-        nombre_up = (row[COL_NOMBRE] or "").strip().upper()
-        incluir_forzado = any(rubro == r and nombre_up.startswith(pref) for r, pref in INCLUDE_NOMBRE_PREFIX)
-        if rubro in EXCLUDE_RUBROS and not incluir_forzado:
+        if rubro in EXCLUDE_RUBROS:
             excluidas_rubro += 1
-            continue
-        if (rubro, linea) in EXCLUDE_LINEAS:
-            excluidas_linea += 1
-            continue
-        if any(rubro == r and nombre_up.startswith(pref) for r, pref in EXCLUDE_NOMBRE_PREFIX):
-            excluidas_linea += 1
             continue
         if not row[COL_PRECIO]:
             excluidas_sin_precio += 1
@@ -331,9 +355,8 @@ def main():
             continue
         filas.append(row)
 
-    print(f"Filas totales con codigo: {excluidas_rubro + excluidas_linea + excluidas_sin_precio + excluidas_sin_stock + len(filas)}")
-    print(f"  excluidas por rubro (zocalos/accesorios/etc): {excluidas_rubro}")
-    print(f"  excluidas por linea puntual (accesorios sueltos): {excluidas_linea}")
+    print(f"Filas totales con codigo: {excluidas_rubro + excluidas_sin_precio + excluidas_sin_stock + len(filas)}")
+    print(f"  excluidas por rubro (servicios/deco/muebles/etc): {excluidas_rubro}")
     print(f"  excluidas sin precio de lista: {excluidas_sin_precio}")
     print(f"  excluidas por stock=0: {excluidas_sin_stock}")
     print(f"  quedan: {len(filas)}")
@@ -402,9 +425,9 @@ def main():
             "id": codigo_str(primero[COL_CODIGO]),
             "nombre_base": nombre_base.title(),
             "rubro": rubro,
-            "grupo": grupo_de(rubro, linea),
+            "grupo": grupo_de(rubro, linea, primero[COL_NOMBRE]),
             "linea": linea,
-            "unidad": unidad_de(rubro),
+            "unidad": unidad_de(rubro, linea, primero[COL_NOMBRE]),
             "moneda": moneda,
             "precio_desde": min((v["precio_venta"] for v in variantes if v["precio_venta"] is not None), default=None),
             "stock_total": _suma_stock(variantes),

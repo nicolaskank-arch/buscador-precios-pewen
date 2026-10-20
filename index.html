@@ -110,6 +110,11 @@
   .pill{font-size:11.5px;font-weight:700;padding:5px 9px;border-radius:8px;background:#f0ede6;color:#5c5648}
   .pill.medidas{background:#eef0f2;color:#4a5560}
   .pill.stock{background:#e7f5ec;color:#2f8f4e}
+  .pill.poco{background:#fdeedd;color:#b45f06}
+  /* Sin stock real en MAXIPISO (aplicar_stock.py): se publica igual, pero se avisa */
+  .pill.agotado{background:#fbe3df;color:#b3261e}
+  .card.agotado .ph img{filter:grayscale(1);opacity:.75}
+  .medida-sin{font-size:11px;font-weight:700;color:#b3261e;white-space:nowrap}
   .detalle-btn{width:100%;border:1px solid var(--linea);background:#f3efe7;color:var(--oro-dark);
     font-size:13px;font-weight:800;padding:10px;border-radius:9px;cursor:pointer;min-height:42px}
   .detalle-btn:active{transform:scale(.98)}
@@ -142,6 +147,14 @@
   .ph img{cursor:zoom-in}
   .fotomas{position:absolute;right:7px;top:7px;background:rgba(19,17,16,.78);color:#fff;
     font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:6px}
+  /* Carteles: comparan contra la lista de precios anterior (calcular_carteles.py) */
+  .cartel{position:absolute;left:8px;top:36px;font-size:11px;font-weight:900;letter-spacing:.3px;
+    padding:4px 8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .cartel.baja{background:#2f8f4e;color:#fff}
+  .cartel.oportunidad{background:#d9381e;color:#fff}
+  .cartel.nuevo{background:var(--negro);color:var(--oro)}
+  .card.oportunidad{border-color:#d9381e;box-shadow:0 2px 14px rgba(217,56,30,.18)}
+  .precio-ant{font-size:12.5px;color:var(--muted);text-decoration:line-through;font-weight:600}
   .orden{position:relative;display:flex}
   select#orden{flex:0 0 auto;border:1.5px solid var(--linea);background:var(--crema);
     color:var(--txt);border-radius:10px;padding:12px 30px 12px 12px;font-size:15px;appearance:none;
@@ -209,11 +222,13 @@
           <option value="precio_asc">Precio (menor a mayor)</option>
           <option value="precio_desc">Precio (mayor a menor)</option>
           <option value="codigo">Código</option>
+          <option value="bajas">Mayor baja de precio</option>
           <option value="populares">Más buscados</option>
         </select>
       </div>
     </div>
     <div class="row">
+      <button class="chip" id="soloCarteles">🔥 Ofertas y novedades</button>
       <button class="chip" id="soloSinFoto">📷 Solo sin foto</button>
     </div>
     <div class="chips" id="chips"></div>
@@ -243,7 +258,7 @@
 // Sin esto la app funciona igual, solo que no se pueden subir fotos nuevas.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydppQPIj0yMNBne3ghrVB9bdQSFXX0DOppby6ftAX-m-ZFmwInIE_gRI47raS5BtWJ/exec";
 
-var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, dolar: null, fotosSubidas: {}, populares: {}, fotosOcultas: {}, fotosPrincipales: {}, ranking: {fotos:{}, vistas:{}} };
+var state = { productos: [], filtro: '', grupo: 'Todos', orden: 'con_foto', soloSinFoto: false, soloCarteles: false, dolar: null, fotosSubidas: {}, populares: {}, fotosOcultas: {}, fotosPrincipales: {}, ranking: {fotos:{}, vistas:{}} };
 
 function fmtMoney(v, moneda){
   if(v==null) return '—';
@@ -296,11 +311,21 @@ function copiarTexto(txt, btn){
 // Intenta compartir foto+texto juntos (asi WhatsApp lo manda como una sola
 // foto con el texto de pie de foto). Si el navegador no soporta compartir
 // archivos o la foto es de un sitio externo que bloquea la descarga (CORS),
-// cae a copiar solo el texto al portapapeles.
+// prueba con la siguiente foto de la galeria; si ninguna se deja bajar, cae
+// a copiar solo el texto al portapapeles.
 var EXT_POR_MIME = {'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp', 'image/gif':'gif'};
 
-function compartirProducto(txt, fotoUrl, btn){
-  if(!fotoUrl){
+function bajarPrimeraFoto(urls, i){
+  i = i || 0;
+  if(i >= urls.length) return Promise.reject(new Error('ninguna foto descargable'));
+  return fetch(urls[i]).then(function(r){
+    if(!r.ok) throw new Error('http ' + r.status);
+    return r.blob();
+  }).catch(function(){ return bajarPrimeraFoto(urls, i + 1); });
+}
+
+function compartirProducto(txt, fotos, btn){
+  if(!fotos.length){
     copiarTexto(txt, btn);
     toast('Esta ficha todavía no tiene foto — se copió el texto');
     return;
@@ -310,10 +335,7 @@ function compartirProducto(txt, fotoUrl, btn){
     toast('Este navegador no permite adjuntar fotos acá — se copió el texto');
     return;
   }
-  fetch(fotoUrl).then(function(r){
-    if(!r.ok) throw new Error('http ' + r.status);
-    return r.blob();
-  }).then(function(blob){
+  bajarPrimeraFoto(fotos).then(function(blob){
     var ext = EXT_POR_MIME[blob.type] || 'jpg';
     var file = new File([blob], 'foto.' + ext, {type: blob.type || 'image/jpeg'});
     if(navigator.canShare && !navigator.canShare({files: [file]})){
@@ -367,11 +389,14 @@ function registrarVista(p){
 }
 
 // Todas las fotos de un producto: las que subió el equipo (más nueva primero)
-// + la original del catálogo si no está repetida — sacando las ocultas y
-// poniendo primero la marcada como principal, si hay.
+// + la original del catálogo + las extra de la galería (Maxipiso), sin
+// repetir — sacando las ocultas y poniendo primero la marcada como
+// principal, si hay.
 function todasLasFotos(p){
   var subidas = (state.fotosSubidas[p.id] || []).map(function(f){ return f.url; }).reverse();
-  if(p.foto_url && subidas.indexOf(p.foto_url) < 0) subidas.push(p.foto_url);
+  [p.foto_url].concat(p.fotos_extra || []).forEach(function(u){
+    if(u && subidas.indexOf(u) < 0) subidas.push(u);
+  });
   var ocultas = state.fotosOcultas[p.id] || [];
   var visibles = subidas.filter(function(u){ return ocultas.indexOf(u) < 0; });
   var principal = state.fotosPrincipales[p.id];
@@ -532,7 +557,9 @@ function grupos(){
 
 function renderChips(){
   var set = grupos();
-  var orden = Object.keys(set).sort(function(a,b){ return set[b]-set[a]; });
+  // por cantidad, pero Accesorios y Otros siempre al final (no son piso)
+  var alFinal = {'Accesorios': 1, 'Otros': 2};
+  var orden = Object.keys(set).sort(function(a,b){ return ((alFinal[a]||0) - (alFinal[b]||0)) || (set[b]-set[a]); });
   var html = '<button class="chip' + (state.grupo==='Todos'?' active':'') + '" data-g="Todos">Todos (' + state.productos.length + ')</button>';
   orden.forEach(function(g){
     html += '<button class="chip' + (state.grupo===g?' active':'') + '" data-g="' + g.replace(/"/g,'&quot;') + '">' + g + ' (' + set[g] + ')</button>';
@@ -560,6 +587,18 @@ function subidaBadgeHtml(){
   return '<span class="subidapor">Foto del equipo</span>';
 }
 
+var CARTEL_TXT = {
+  baja: function(p){ return '⬇ Bajó ' + p.baja_pct + '%'; },
+  oportunidad: function(p){ return '🔥 Gran oportunidad −' + p.baja_pct + '%'; },
+  nuevo: function(){ return '✨ Nuevo'; }
+};
+function cartelHtml(p){
+  return p.cartel ? '<span class="cartel ' + p.cartel + '">' + CARTEL_TXT[p.cartel](p) + '</span>' : '';
+}
+function precioAntHtml(precio, moneda){
+  return precio ? '<span class="precio-ant">' + fmtMoney(precio, moneda) + '</span> ' : '';
+}
+
 function cardHtml(p){
   var fotos = todasLasFotos(p);
   var fotoSubida = (state.fotosSubidas[p.id]||[]).length > 0;
@@ -569,15 +608,18 @@ function cardHtml(p){
       (fotos.length>1 ? '<span class="fotomas">+' + (fotos.length-1) + '</span>' : '')
     : '<div class="noimg">Sin foto todavía</div>';
   fotoHtml += fotoBtnHtml(p);
-  var precioHtml = '<span class="precio">' + (p.variantes.length>1?'<span class="desde">desde</span>':'') + fmtMoney(p.precio_desde, p.moneda) + '</span>';
+  var precioHtml = precioAntHtml(p.precio_desde_anterior, p.moneda) + '<span class="precio">' + (p.variantes.length>1?'<span class="desde">desde</span>':'') + fmtMoney(p.precio_desde, p.moneda) + '</span>';
   var arsHtml = p.moneda==='USD' ? '<span class="ars-equiv">' + arsEquiv(p.precio_desde) + '</span>' : '';
   var pills = '';
   if(p.variantes.length>1) pills += '<span class="pill medidas">' + p.variantes.length + ' medidas</span>';
   else if(p.variantes[0].medidas) pills += '<span class="pill medidas">' + p.variantes[0].medidas + '</span>';
   pills += '<span class="pill">' + p.unidad + '</span>';
+  // stock real de MAXIPISO (aplicar_stock.py): todas sus medidas con menos de 100
+  if(p.sin_stock) pills += '<span class="pill agotado">🚫 Sin stock · confirmar con Stock</span>';
+  else if(p.poco_stock) pills += '<span class="pill poco">⏳ Queda poco stock</span>';
 
   var variantesRows = p.variantes.map(function(v){
-    return '<tr><td>' + (v.medidas||'—') + '</td><td>' + v.codigo + '</td><td>' + fmtMoney(v.precio_venta, v.moneda) + '</td></tr>';
+    return '<tr><td>' + (v.medidas||'—') + (v.sin_stock && !p.sin_stock ? ' <span class="medida-sin">sin stock</span>' : '') + '</td><td>' + v.codigo + '</td><td>' + precioAntHtml(v.precio_anterior, v.moneda) + fmtMoney(v.precio_venta, v.moneda) + '</td></tr>';
   }).join('');
 
   var pagoBtns = ['contado','tarjeta1','tarjeta3','tarjeta6','tarjeta12'].map(function(k,i){
@@ -589,8 +631,8 @@ function cardHtml(p){
   var skuHtml = '<div class="sku"><span class="skuTag">SKU</span>' + p.variantes[0].codigo +
     (otrosCodigos ? '<span class="skuMas">+ ' + otrosCodigos + '</span>' : '') + '</div>';
 
-  return '<div class="card" data-id="' + p.id + '">' +
-    '<div class="ph"><span class="catlabel">' + p.grupo + '</span>' + fotoHtml + '</div>' +
+  return '<div class="card' + (p.cartel==='oportunidad' ? ' oportunidad' : '') + (p.sin_stock ? ' agotado' : '') + '" data-id="' + p.id + '">' +
+    '<div class="ph"><span class="catlabel">' + p.grupo + '</span>' + cartelHtml(p) + fotoHtml + '</div>' +
     '<div class="body">' +
       '<div class="nombre">' + p.nombre_base + '</div>' +
       skuHtml +
@@ -655,6 +697,11 @@ function ordenarLista(lista){
       });
     case 'codigo':
       return lista.slice().sort(function(a,b){ return String(a.id).localeCompare(String(b.id),'es',{numeric:true}); });
+    case 'bajas':
+      // mayor baja primero; despues los nuevos; despues el resto
+      return lista.slice().sort(function(a,b){
+        return ((b.baja_pct||0) - (a.baja_pct||0)) || ((b.cartel==='nuevo') - (a.cartel==='nuevo'));
+      });
     case 'populares':
       return lista.slice().sort(function(a,b){ return (state.populares[b.id]||0) - (state.populares[a.id]||0); });
     default: // relevancia: si hay búsqueda, por qué tan bien matchea; si no, orden de catálogo
@@ -666,12 +713,20 @@ function ordenarLista(lista){
 function renderGrid(){
   var lista = state.productos.filter(function(p){
     return (state.grupo==='Todos' || p.grupo===state.grupo) && matchTexto(p, state.filtro) &&
-      (!state.soloSinFoto || todasLasFotos(p).length===0);
+      (!state.soloSinFoto || todasLasFotos(p).length===0) &&
+      (!state.soloCarteles || !!p.cartel);
   });
   lista = ordenarLista(lista);
+  // los sin stock siempre al final, respetando el orden elegido
+  lista = lista.filter(function(p){ return !p.sin_stock; }).concat(lista.filter(function(p){ return p.sin_stock; }));
   var totalSinFoto = state.productos.filter(function(p){ return todasLasFotos(p).length===0; }).length;
   document.getElementById('soloSinFoto').textContent = '📷 Solo sin foto (' + totalSinFoto + ')';
   document.getElementById('soloSinFoto').classList.toggle('active', state.soloSinFoto);
+  var totalCarteles = state.productos.filter(function(p){ return p.cartel; }).length;
+  var btnCarteles = document.getElementById('soloCarteles');
+  btnCarteles.style.display = totalCarteles ? '' : 'none';
+  btnCarteles.textContent = '🔥 Ofertas y novedades (' + totalCarteles + ')';
+  btnCarteles.classList.toggle('active', state.soloCarteles);
   document.getElementById('hint').textContent = lista.length + ' producto' + (lista.length===1?'':'s');
   if(!lista.length){
     document.getElementById('grid').innerHTML = '<div class="vacio">No encontré nada con esa búsqueda.</div>';
@@ -730,7 +785,7 @@ function renderGrid(){
         (medidasTxt ? '\nMedidas: ' + medidasTxt : '') +
         '\nSKU: ' + v.codigo + (otrosCodigos ? ', ' + otrosCodigos : '');
       var fotos = todasLasFotos(p);
-      compartirProducto(txt, fotos[0], btn);
+      compartirProducto(txt, fotos, btn);
     });
   });
 }
@@ -762,6 +817,10 @@ document.getElementById('orden').addEventListener('change', function(e){
 });
 document.getElementById('soloSinFoto').addEventListener('click', function(){
   state.soloSinFoto = !state.soloSinFoto;
+  renderGrid();
+});
+document.getElementById('soloCarteles').addEventListener('click', function(){
+  state.soloCarteles = !state.soloCarteles;
   renderGrid();
 });
 

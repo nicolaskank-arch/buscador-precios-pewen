@@ -343,7 +343,11 @@ def main():
     # completas -- recalculando todo desde cero contra el set ya comprometido --
     # hasta que una pasada no sume ningun producto nuevo, asi una sola corrida
     # ya converge solita (no hace falta ejecutar el script varias veces a mano).
-    comprometidos = {p["id"] for p in productos if p.get("foto_url")}
+    # Accesorios afuera: en el PDF del proveedor sus recortes salen como la
+    # etiqueta de precio ("u$s 16.90 +IVA La Varilla") o como la foto del
+    # piso/panel que acompanian. Se marcan como "comprometidos" para que no
+    # entren al pool.
+    comprometidos = {p["id"] for p in productos if p.get("foto_url") or p.get("grupo") == "Accesorios"}
     resultados_por_id = {}
     for _ in range(25):
         asignados = single_pass(comprometidos)
