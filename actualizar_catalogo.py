@@ -22,8 +22,10 @@ Que hace, en orden:
     0. calcular_carteles.py --guardar-anterior -> antes de pisar nada, guarda
        los precios de la lista que estaba cargada (para "Bajo X%" / "Nuevo").
     4. agregar_fotos_extra.py     -> galeria: suma las 2-3 fotos de Maxipiso
-       de cada producto (por codigo exacto, desde fotos_maxipiso.json). Para
-       refrescar ese JSON: python bajar_fotos_maxipiso.py (de vez en cuando).
+       y Chiusaroli de cada producto (por codigo exacto, desde
+       fotos_maxipiso.json / fotos_chiusaroli.json) + las bajadas a mano
+       (fotos_extra_manual.json, ej. Villagres). Para refrescar los JSON:
+       python bajar_fotos_maxipiso.py / bajar_fotos_chiusaroli.py.
     5. calcular_carteles.py       -> carteles "Bajo X%", "Gran oportunidad" y
        "Nuevo" comparando contra la lista anterior.
 

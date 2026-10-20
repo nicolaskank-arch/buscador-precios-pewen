@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 Suma fotos EXTRA a cada producto (galeria), ademas de su foto principal
-(foto_url). Hoy la fuente es fotos_maxipiso.json (lo genera
-bajar_fotos_maxipiso.py), matcheado por codigo exacto: el id del producto y
-el codigo de cada una de sus variantes.
+(foto_url), matcheadas por codigo exacto (el id del producto y el codigo de
+cada una de sus variantes). Fuentes, en este orden:
+  - fotos_maxipiso.json (lo genera bajar_fotos_maxipiso.py) y
+    fotos_chiusaroli.json (bajar_fotos_chiusaroli.py): hotlink, sus
+    servidores dejan adjuntarlas al compartir.
+  - fotos_extra_manual.json: fotos BAJADAS a fotos/ de sitios que no dejan
+    adjuntarlas por CORS (ej. villagres.com.br), servidas desde el mismo
+    buscador. {"<codigo>": {"fuente": "...", "pagina": "...", "fotos": [...]}}
+    Van primero: son las del fabricante.
 
 - Escribe p["fotos_extra"] = [urls...] sin repetir foto_url.
 - Si el producto no tenia foto principal, la primera extra pasa a ser la
@@ -23,6 +29,8 @@ HERE = Path(__file__).parent
 PRODUCTOS_JSON = HERE / "productos.json"
 SIN_FOTO_CSV = HERE / "SIN-FOTO.csv"
 FOTOS_MAXIPISO = HERE / "fotos_maxipiso.json"
+FOTOS_CHIUSAROLI = HERE / "fotos_chiusaroli.json"
+FOTOS_MANUAL = HERE / "fotos_extra_manual.json"
 
 
 def main():
@@ -30,6 +38,12 @@ def main():
         print("No hay fotos_maxipiso.json (correr bajar_fotos_maxipiso.py) -- nada que hacer.")
         return
     maxi = json.loads(FOTOS_MAXIPISO.read_text(encoding="utf-8"))
+    if FOTOS_CHIUSAROLI.exists():
+        for cod, urls in json.loads(FOTOS_CHIUSAROLI.read_text(encoding="utf-8")).items():
+            maxi[cod] = maxi.get(cod, []) + [u for u in urls if u not in maxi.get(cod, [])]
+    if FOTOS_MANUAL.exists():
+        for cod, d in json.loads(FOTOS_MANUAL.read_text(encoding="utf-8")).items():
+            maxi[cod] = d["fotos"] + [u for u in maxi.get(cod, []) if u not in d["fotos"]]
     data = json.loads(PRODUCTOS_JSON.read_text(encoding="utf-8"))
     productos = data["productos"]
 
