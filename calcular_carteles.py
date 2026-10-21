@@ -4,6 +4,9 @@ Carteles de la ficha, comparando la lista actual contra la ANTERIOR:
 
   - "Bajo X%"           alguna variante bajo 3% o mas (misma moneda).
   - "Gran oportunidad"  bajo mas de 15% (reemplaza al de "Bajo").
+  - "Subio X%"          alguna variante subio 3% o mas y ninguna bajo
+                        (para que el vendedor sepa que el cliente puede
+                        tener un presupuesto viejo mas barato).
   - "Nuevo"             ninguna de sus variantes estaba en la lista anterior,
                         y es piso, deck o revestimiento (no grupo "Otros" --
                         colchones, sommiers -- ni "Accesorios" -- zocalos,
@@ -18,9 +21,9 @@ actualizar_catalogo.py la guarda ANTES de reconstruir el catalogo con
 misma lista, se sigue comparando contra la de antes, no contra si misma).
 
 Escribe en productos.json:
-  producto: cartel ("baja" | "oportunidad" | "nuevo"), baja_pct,
-            precio_desde_anterior
-  variante: precio_anterior (solo si esa variante bajo)
+  producto: cartel ("baja" | "oportunidad" | "sube" | "nuevo"), baja_pct /
+            sube_pct, precio_desde_anterior
+  variante: precio_anterior (solo si esa variante bajo o subio)
 
 Uso:
     python calcular_carteles.py                          # aplica carteles
@@ -35,6 +38,7 @@ PRODUCTOS_JSON = HERE / "productos.json"
 LISTA_ANTERIOR = HERE / "lista_anterior.json"
 
 BAJA_MIN = 0.03
+SUBA_MIN = 0.03
 OPORTUNIDAD_MIN = 0.15
 SIN_CARTEL_NUEVO = {"Otros", "Accesorios"}
 
@@ -69,11 +73,11 @@ def aplicar():
     data = json.loads(PRODUCTOS_JSON.read_text(encoding="utf-8"))
     data["carteles_vs"] = anterior.get("generado_de")
 
-    conteo = {"baja": 0, "oportunidad": 0, "nuevo": 0}
+    conteo = {"baja": 0, "oportunidad": 0, "sube": 0, "nuevo": 0}
     for p in data["productos"]:
-        for k in ("cartel", "baja_pct", "precio_desde_anterior"):
+        for k in ("cartel", "baja_pct", "sube_pct", "precio_desde_anterior"):
             p.pop(k, None)
-        mayor_baja = 0.0
+        mayor_baja = mayor_suba = 0.0
         viejos = []
         for v in p["variantes"]:
             v.pop("precio_anterior", None)
@@ -85,12 +89,20 @@ def aplicar():
             if baja >= BAJA_MIN:
                 v["precio_anterior"] = ant["precio_venta"]
                 mayor_baja = max(mayor_baja, baja)
+            elif -baja >= SUBA_MIN:
+                v["precio_anterior"] = ant["precio_venta"]
+                mayor_suba = max(mayor_suba, -baja)
 
         if mayor_baja >= BAJA_MIN:
             p["cartel"] = "oportunidad" if mayor_baja > OPORTUNIDAD_MIN else "baja"
             p["baja_pct"] = round(mayor_baja * 100)
             # El "desde" viejo tachado, solo si el "desde" de hoy es mas bajo.
             if viejos and p["precio_desde"] is not None and p["precio_desde"] < min(viejos) * (1 - BAJA_MIN):
+                p["precio_desde_anterior"] = min(viejos)
+        elif mayor_suba >= SUBA_MIN:
+            p["cartel"] = "sube"
+            p["sube_pct"] = round(mayor_suba * 100)
+            if viejos and p["precio_desde"] is not None and p["precio_desde"] > min(viejos) * (1 + SUBA_MIN):
                 p["precio_desde_anterior"] = min(viejos)
         elif not any(v["codigo"] in prev for v in p["variantes"]) and es_piso_o_revestimiento(p):
             p["cartel"] = "nuevo"
@@ -99,7 +111,7 @@ def aplicar():
 
     PRODUCTOS_JSON.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Carteles vs {anterior.get('generado_de')}: bajaron {conteo['baja']} | "
-          f"gran oportunidad {conteo['oportunidad']} | nuevos {conteo['nuevo']}")
+          f"gran oportunidad {conteo['oportunidad']} | subieron {conteo['sube']} | nuevos {conteo['nuevo']}")
 
 
 if __name__ == "__main__":

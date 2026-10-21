@@ -153,6 +153,8 @@
   .cartel.baja{background:#2f8f4e;color:#fff}
   .cartel.oportunidad{background:#d9381e;color:#fff}
   .cartel.nuevo{background:var(--negro);color:var(--oro)}
+  .cartel.sube{background:#fff3e0;color:#a14e00;border:1px solid #f0b46a}
+  .precio-antes{font-size:12px;color:var(--muted);font-weight:600}
   .card.oportunidad{border-color:#d9381e;box-shadow:0 2px 14px rgba(217,56,30,.18)}
   .precio-ant{font-size:12.5px;color:var(--muted);text-decoration:line-through;font-weight:600}
   .orden{position:relative;display:flex}
@@ -590,13 +592,19 @@ function subidaBadgeHtml(){
 var CARTEL_TXT = {
   baja: function(p){ return '⬇ Bajó ' + p.baja_pct + '%'; },
   oportunidad: function(p){ return '🔥 Gran oportunidad −' + p.baja_pct + '%'; },
+  sube: function(p){ return '⬆ Subió ' + p.sube_pct + '%'; },
   nuevo: function(){ return '✨ Nuevo'; }
 };
+// carteles que entran en "Ofertas y novedades" (la suba no es una oferta)
+var CARTEL_OFERTA = {baja: 1, oportunidad: 1, nuevo: 1};
 function cartelHtml(p){
   return p.cartel ? '<span class="cartel ' + p.cartel + '">' + CARTEL_TXT[p.cartel](p) + '</span>' : '';
 }
-function precioAntHtml(precio, moneda){
-  return precio ? '<span class="precio-ant">' + fmtMoney(precio, moneda) + '</span> ' : '';
+// precio de la lista anterior: tachado si bajo; "antes" sin tachar si subio
+function precioAntHtml(precio, moneda, subio){
+  if(!precio) return '';
+  return subio ? '<span class="precio-antes">antes ' + fmtMoney(precio, moneda) + '</span> '
+               : '<span class="precio-ant">' + fmtMoney(precio, moneda) + '</span> ';
 }
 
 function cardHtml(p){
@@ -608,7 +616,9 @@ function cardHtml(p){
       (fotos.length>1 ? '<span class="fotomas">+' + (fotos.length-1) + '</span>' : '')
     : '<div class="noimg">Sin foto todavía</div>';
   fotoHtml += fotoBtnHtml(p);
-  var precioHtml = precioAntHtml(p.precio_desde_anterior, p.moneda) + '<span class="precio">' + (p.variantes.length>1?'<span class="desde">desde</span>':'') + fmtMoney(p.precio_desde, p.moneda) + '</span>';
+  var precioHtml = '<span class="precio">' + (p.variantes.length>1?'<span class="desde">desde</span>':'') + fmtMoney(p.precio_desde, p.moneda) + '</span>';
+  if(p.cartel==='sube') precioHtml += ' ' + precioAntHtml(p.precio_desde_anterior, p.moneda, true);
+  else precioHtml = precioAntHtml(p.precio_desde_anterior, p.moneda) + precioHtml;
   var arsHtml = p.moneda==='USD' ? '<span class="ars-equiv">' + arsEquiv(p.precio_desde) + '</span>' : '';
   var pills = '';
   if(p.variantes.length>1) pills += '<span class="pill medidas">' + p.variantes.length + ' medidas</span>';
@@ -619,7 +629,7 @@ function cardHtml(p){
   else if(p.poco_stock) pills += '<span class="pill poco">⏳ Queda poco stock</span>';
 
   var variantesRows = p.variantes.map(function(v){
-    return '<tr><td>' + (v.medidas||'—') + (v.sin_stock && !p.sin_stock ? ' <span class="medida-sin">sin stock</span>' : '') + '</td><td>' + v.codigo + '</td><td>' + precioAntHtml(v.precio_anterior, v.moneda) + fmtMoney(v.precio_venta, v.moneda) + '</td></tr>';
+    return '<tr><td>' + (v.medidas||'—') + (v.sin_stock && !p.sin_stock ? ' <span class="medida-sin">sin stock</span>' : '') + '</td><td>' + v.codigo + '</td><td>' + (v.precio_anterior && v.precio_anterior < v.precio_venta ? fmtMoney(v.precio_venta, v.moneda) + ' ' + precioAntHtml(v.precio_anterior, v.moneda, true) : precioAntHtml(v.precio_anterior, v.moneda) + fmtMoney(v.precio_venta, v.moneda)) + '</td></tr>';
   }).join('');
 
   var pagoBtns = ['contado','tarjeta1','tarjeta3','tarjeta6','tarjeta12'].map(function(k,i){
@@ -714,7 +724,7 @@ function renderGrid(){
   var lista = state.productos.filter(function(p){
     return (state.grupo==='Todos' || p.grupo===state.grupo) && matchTexto(p, state.filtro) &&
       (!state.soloSinFoto || todasLasFotos(p).length===0) &&
-      (!state.soloCarteles || !!p.cartel);
+      (!state.soloCarteles || !!CARTEL_OFERTA[p.cartel]);
   });
   lista = ordenarLista(lista);
   // los sin stock siempre al final, respetando el orden elegido
@@ -722,7 +732,7 @@ function renderGrid(){
   var totalSinFoto = state.productos.filter(function(p){ return todasLasFotos(p).length===0; }).length;
   document.getElementById('soloSinFoto').textContent = '📷 Solo sin foto (' + totalSinFoto + ')';
   document.getElementById('soloSinFoto').classList.toggle('active', state.soloSinFoto);
-  var totalCarteles = state.productos.filter(function(p){ return p.cartel; }).length;
+  var totalCarteles = state.productos.filter(function(p){ return CARTEL_OFERTA[p.cartel]; }).length;
   var btnCarteles = document.getElementById('soloCarteles');
   btnCarteles.style.display = totalCarteles ? '' : 'none';
   btnCarteles.textContent = '🔥 Ofertas y novedades (' + totalCarteles + ')';
